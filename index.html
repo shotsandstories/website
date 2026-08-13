@@ -67,14 +67,14 @@
   <section id="section-contact" class="section-wrap">
     <p class="section-label">Say Hello</p>
     <h2 class="section-heading">Get In Touch</h2>
-    <div class="contact-form">
-      <input type="text" placeholder="Your Name *">
-      <input type="email" placeholder="Your Email *">
-      <input type="text" class="full" placeholder="Subject">
-      <textarea class="full" placeholder="Your Message *"></textarea>
+    <form class="contact-form" id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+      <input type="text" name="name" placeholder="Your Name *" required>
+      <input type="email" name="email" placeholder="Your Email *" required>
+      <input type="text" name="subject" class="full" placeholder="Subject">
+      <textarea name="message" class="full" placeholder="Your Message *" required></textarea>
       <p class="cf-note">* Required Fields</p>
-      <button class="btn-send" onclick="showToast('Message sent!')">Send Message</button>
-    </div>
+      <button type="submit" class="btn-send">Send Message</button>
+    </form>
   </section>
 </div>
 
@@ -159,6 +159,35 @@ function renderAbout(){
   if(a.photo)document.getElementById('about-img').src=a.photo;
   document.getElementById('about-body-content').innerHTML=(a.body||'').split('\n\n').map(p=>p.trim()).filter(Boolean).map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
 }
+
+/* CONTACT FORM — submits via fetch to Formspree so we can stay on-page
+   and show the existing toast instead of a full-page redirect. */
+const contactForm = document.getElementById('contact-form');
+contactForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = contactForm.querySelector('.btn-send');
+  const originalLabel = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  try {
+    const res = await fetch(contactForm.action, {
+      method: 'POST',
+      body: new FormData(contactForm),
+      headers: { 'Accept': 'application/json' }
+    });
+    if (res.ok) {
+      showToast('Message sent!');
+      contactForm.reset();
+    } else {
+      showToast('Could not send — try again', true);
+    }
+  } catch (err) {
+    showToast('Network error — try again', true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  }
+});
 
 /* SCROLL SPY — only Home/About/Contact live on this page; Galleries is a separate page */
 const rp=document.getElementById('right-panel');

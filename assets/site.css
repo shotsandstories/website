@@ -319,6 +319,7 @@ nav ul li a.active::after { width: 20px; }
   transition: all 0.35s ease; pointer-events: none;
 }
 .toast-msg.show { transform: translateY(0); opacity: 1; }
+.toast-msg.error { background: #c0544a; }
 
 /* ═══ RESPONSIVE ═══ */
 @media (max-width: 900px) {

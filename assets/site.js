@@ -62,7 +62,7 @@ function lbKey(e){if(e.key==='Escape')lbClose();if(e.key==='ArrowLeft')lbMove(-1
 document.getElementById('lightbox').addEventListener('click',function(e){if(e.target===this)lbClose();});
 
 /* TOAST */
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+function showToast(msg,err=false){const t=document.getElementById('toast');t.textContent=msg;t.classList.toggle('error',err);t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 
 /* every page needs this on load */
 initPanelState();
