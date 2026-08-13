@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Shorts & Stories</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { font-family: 'Raleway', sans-serif; font-weight: 400; color: #333; background: #f7f7f7; }
+a { text-decoration: none; color: inherit; }
+img { display: block; max-width: 100%; }
+
+/* ── LOGIN ── */
+#login-screen {
+  min-height: 100vh; display: flex;
+  align-items: center; justify-content: center;
+  background: #1a1a1a;
+}
+.login-box {
+  background: #fff; padding: 56px 48px;
+  width: 100%; max-width: 380px; text-align: center;
+}
+.login-box .lb-brand {
+  font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+  color: #aaa; display: block; margin-bottom: 8px;
+}
+.login-box h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px; font-weight: 400; color: #1a1a1a; margin-bottom: 36px;
+}
+.login-box input {
+  width: 100%; border: 1px solid #ddd; background: #fafafa;
+  font-family: 'Raleway', sans-serif; font-size: 13px;
+  padding: 13px 16px; text-align: center; outline: none;
+  letter-spacing: 3px; margin-bottom: 14px;
+  transition: border-color 0.25s;
+}
+.login-box input:focus { border-color: #999; background: #fff; }
+.login-box button {
+  width: 100%; background: #1a1a1a; color: #fff;
+  border: none; font-family: 'Raleway', sans-serif;
+  font-size: 11px; font-weight: 500; letter-spacing: 3px;
+  text-transform: uppercase; padding: 14px; cursor: pointer;
+  transition: background 0.25s;
+}
+.login-box button:hover { background: #444; }
+.login-err { color: #c0544a; font-size: 11px; letter-spacing: 1px; margin-top: 10px; display: none; }
+
+/* ── ADMIN LAYOUT ── */
+#admin-screen { display: none; min-height: 100vh; }
+
+.adm-header {
+  background: #1a1a1a; padding: 18px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.adm-header .brand {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px; font-weight: 400; color: #fff;
+}
+.adm-header .brand small {
+  display: block; font-family: 'Raleway', sans-serif;
+  font-size: 10px; letter-spacing: 3px; color: #777;
+  text-transform: uppercase; margin-bottom: 2px;
+  font-style: normal;
+}
+.adm-header-btns { display: flex; gap: 12px; }
+
+/* buttons */
+.btn {
+  font-family: 'Raleway', sans-serif; font-size: 11px;
+  font-weight: 500; letter-spacing: 3px; text-transform: uppercase;
+  padding: 9px 20px; border: 1px solid; cursor: pointer;
+  background: transparent; transition: all 0.25s;
+}
+.btn-dark { border-color: #555; color: #aaa; }
+.btn-dark:hover { border-color: #fff; color: #fff; }
+.btn-white { border-color: #ddd; color: #666; background: #fff; }
+.btn-white:hover { border-color: #999; color: #333; }
+.btn-black { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+.btn-black:hover { background: #444; border-color: #444; }
+.btn-red { border-color: #c0544a; color: #c0544a; }
+.btn-red:hover { background: #c0544a; color: #fff; }
+.btn-green { border-color: #5a9e5e; color: #5a9e5e; }
+.btn-green:hover { background: #5a9e5e; color: #fff; }
+
+/* tabs */
+.adm-tabs {
+  background: #fff; border-bottom: 1px solid #eee;
+  display: flex; padding: 0 40px; gap: 0;
+}
+.adm-tab {
+  font-family: 'Raleway', sans-serif; font-size: 11px;
+  font-weight: 500; letter-spacing: 3px; text-transform: uppercase;
+  color: #aaa; padding: 16px 20px; cursor: pointer;
+  background: none; border: none; border-bottom: 2px solid transparent;
+  transition: all 0.25s;
+}
+.adm-tab.active { color: #1a1a1a; border-bottom-color: #1a1a1a; }
+.adm-tab:hover:not(.active) { color: #555; }
+
+/* body */
+.adm-body { padding: 40px; max-width: 1100px; }
+.adm-section { display: none; }
+.adm-section.active { display: block; }
+
+/* section header */
+.sec-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 28px;
+}
+.sec-head h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px; font-weight: 400; color: #1a1a1a;
+}
+
+/* albums grid */
+.alb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+.alb-card {
+  background: #fff; border: 1px solid #eee;
+  transition: box-shadow 0.25s, border-color 0.25s;
+}
+.alb-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-color: #ddd; }
+.alb-card-cover {
+  aspect-ratio: 16/9; overflow: hidden; background: #f0f0f0;
+  position: relative; cursor: pointer;
+}
+.alb-card-cover img { width: 100%; height: 100%; object-fit: cover; }
+.alb-card-cover .edit-overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.45);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.25s;
+  font-size: 11px; letter-spacing: 3px; color: #fff; text-transform: uppercase;
+}
+.alb-card:hover .edit-overlay { opacity: 1; }
+.alb-card-cover .no-cover {
+  width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+  font-size: 32px; color: #ccc;
+}
+.alb-card-body { padding: 18px 20px; }
+.alb-card-body h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px; font-weight: 400; color: #1a1a1a; margin-bottom: 4px;
+}
+.alb-card-body .atags {
+  font-size: 10px; letter-spacing: 2px; color: #aaa;
+  text-transform: uppercase; margin-bottom: 4px;
+}
+.alb-card-body .acount {
+  font-size: 12px; color: #bbb; margin-bottom: 16px;
+}
+.alb-card-actions { display: flex; gap: 8px; }
+.add-new-card {
+  border: 1px dashed #ccc; background: #fff;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; min-height: 220px; gap: 12px;
+  cursor: pointer; transition: border-color 0.25s, background 0.25s;
+}
+.add-new-card:hover { border-color: #999; background: #f9f9f9; }
+.add-new-card .plus { font-size: 28px; color: #ccc; line-height: 1; }
+.add-new-card span { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; }
+
+/* form elements */
+.form-field { margin-bottom: 20px; }
+.form-field label {
+  display: block; font-size: 10px; letter-spacing: 3px;
+  text-transform: uppercase; color: #999; margin-bottom: 8px;
+}
+.form-field input, .form-field textarea {
+  width: 100%; border: 1px solid #ddd; background: #fafafa;
+  font-family: 'Raleway', sans-serif; font-size: 13px; font-weight: 400;
+  color: #333; padding: 12px 14px; outline: none; resize: none;
+  transition: border-color 0.25s;
+}
+.form-field input:focus, .form-field textarea:focus { border-color: #999; background: #fff; }
+.form-field textarea { min-height: 80px; }
+.form-field .hint { font-size: 11px; color: #bbb; margin-top: 6px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* modal */
+.modal-bg {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  z-index: 500; display: none;
+  align-items: flex-start; justify-content: center;
+  padding: 40px 20px; overflow-y: auto;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: #fff; width: 100%; max-width: 680px;
+  margin: auto; animation: mIn 0.3s ease; flex-shrink: 0;
+}
+@keyframes mIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.modal-hd {
+  padding: 22px 28px; border-bottom: 1px solid #eee;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-hd h3 {
+  font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 400; color: #1a1a1a;
+}
+.modal-hd .mc {
+  background: none; border: none; font-size: 22px; color: #aaa; cursor: pointer;
+  transition: color 0.2s; line-height: 1;
+}
+.modal-hd .mc:hover { color: #333; }
+.modal-bd { padding: 28px; }
+.modal-ft {
+  padding: 18px 28px; border-top: 1px solid #eee;
+  display: flex; gap: 10px; justify-content: flex-end;
+}
+
+/* image manager in modal */
+.imgs-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.imgs-header h4 {
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #999;
+}
+.imgs-header span { font-size: 10px; letter-spacing: 2px; color: #ccc; text-transform: uppercase; }
+.imgs-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 8px; margin-bottom: 14px; min-height: 50px;
+}
+.img-item-adm {
+  position: relative; aspect-ratio: 4/3;
+  background: #f0f0f0; border: 1px solid #eee;
+  overflow: hidden; cursor: grab;
+}
+.img-item-adm img { width: 100%; height: 100%; object-fit: cover; }
+.img-item-adm.dragging { opacity: 0.35; }
+.img-item-adm.drag-over { border: 2px dashed #1a1a1a; }
+.img-item-adm .rm-btn {
+  position: absolute; top: 3px; right: 3px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: rgba(192,84,74,0.9); color: #fff;
+  border: none; font-size: 11px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.2s;
+}
+.img-item-adm:hover .rm-btn { opacity: 1; }
+.img-item-adm .cover-badge {
+  position: absolute; bottom: 3px; left: 3px;
+  background: #1a1a1a; color: #fff;
+  font-size: 8px; letter-spacing: 2px; padding: 2px 6px; text-transform: uppercase;
+}
+.drop-zone {
+  border: 1px dashed #ccc; padding: 18px;
+  text-align: center; cursor: pointer;
+  font-size: 11px; letter-spacing: 2px; color: #bbb; text-transform: uppercase;
+  transition: border-color 0.25s, background 0.25s; margin-bottom: 10px;
+}
+.drop-zone.active-dz { border-color: #1a1a1a; background: #f9f9f9; }
+.drop-zone:hover { border-color: #aaa; }
+.add-url-row { display: flex; gap: 8px; }
+.add-url-row input { flex: 1; }
+
+/* upload queue */
+.upload-queue { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.upload-item { border: 1px solid #eee; padding: 8px 12px; }
+.upload-item-name {
+  font-size: 11px; color: #666; margin-bottom: 6px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.upload-bar-track { height: 4px; background: #eee; margin-bottom: 6px; }
+.upload-bar-fill { height: 100%; width: 0%; background: #1a1a1a; transition: width 0.2s ease; }
+.upload-status {
+  font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #bbb;
+}
+.upload-status.ok { color: #5a9e5e; }
+.upload-status.err { color: #c0544a; }
+
+/* settings */
+.settings-group {
+  background: #fff; border: 1px solid #eee;
+  padding: 28px; margin-bottom: 20px; max-width: 520px;
+}
+.settings-group h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px; font-weight: 400; color: #1a1a1a; margin-bottom: 20px;
+}
+.danger-zone {
+  border-color: #f5ddd9;
+}
+.danger-zone h4 { color: #c0544a; }
+
+/* confirm dialog */
+.confirm-bg {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+  z-index: 600; display: none;
+  align-items: center; justify-content: center;
+}
+.confirm-bg.open { display: flex; }
+.confirm-box {
+  background: #fff; padding: 40px; max-width: 360px; width: 100%; text-align: center;
+}
+.confirm-box p {
+  font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 400;
+  color: #333; margin-bottom: 28px; line-height: 1.6;
+}
+.confirm-box .cbtns { display: flex; gap: 10px; justify-content: center; }
+
+/* toast */
+.toast-msg {
+  position: fixed; bottom: 28px; right: 28px;
+  background: #1a1a1a; color: #fff;
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  padding: 12px 22px; z-index: 2000;
+  transform: translateY(60px); opacity: 0;
+  transition: all 0.35s ease; pointer-events: none;
+}
+.toast-msg.error { background: #c0544a; }
+.toast-msg.show { transform: translateY(0); opacity: 1; }
+
+@media (max-width: 768px) {
+  .adm-body { padding: 24px 16px; }
+  .alb-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .adm-tabs { padding: 0 16px; }
+  .adm-header { padding: 14px 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <span class="lb-brand">Admin Panel</span>
+    <h2>Shorts &amp; Stories</h2>
+    <input type="password" id="pw" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button onclick="doLogin()">Sign In</button>
+    <p class="login-err" id="pw-err">Incorrect password. Please try again.</p>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin-screen">
+  <div class="adm-header">
+    <div class="brand">
+      <small>Admin Panel</small>
+      Shorts &amp; Stories
+    </div>
+    <div class="adm-header-btns">
+      <a href="index.html" target="_blank"><button class="btn btn-dark">View Site &#8599;</button></a>
+      <button class="btn btn-dark" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="adm-tabs">
+    <button class="adm-tab active" onclick="switchTab('albums',this)">Albums</button>
+    <button class="adm-tab" onclick="switchTab('about',this)">About</button>
+    <button class="adm-tab" onclick="switchTab('settings',this)">Settings</button>
+  </div>
+
+  <div class="adm-body">
+
+    <!-- ALBUMS -->
+    <div class="adm-section active" id="tab-albums">
+      <div class="sec-head">
+        <h3>Your Albums</h3>
+        <button class="btn btn-black" onclick="openModal()">+ New Album</button>
+      </div>
+      <div class="alb-grid" id="alb-grid"></div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="adm-section" id="tab-about">
+      <div class="sec-head">
+        <h3>About Page</h3>
+        <button class="btn btn-black" onclick="saveAbout()">Save Changes</button>
+      </div>
+      <div style="max-width:600px">
+        <div class="form-field">
+          <label>Section Heading</label>
+          <input type="text" id="ab-heading" placeholder="About Us">
+        </div>
+        <div class="form-field">
+          <label>Photographer Photo URL</label>
+          <input type="text" id="ab-photo" placeholder="https://...">
+          <div class="hint">Paste an image URL. Upload to Imgur, Cloudinary, etc. first for a hosted link.</div>
+        </div>
+        <div class="form-field">
+          <label>Your Bio / Story</label>
+          <textarea id="ab-body" style="min-height:200px" placeholder="Write your story here..."></textarea>
+          <div class="hint">Separate paragraphs with a blank line.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="adm-section" id="tab-settings">
+      <div class="sec-head"><h3>Settings</h3></div>
+      <div class="settings-group">
+        <h4>Change Password</h4>
+        <div class="form-field"><label>Current Password</label><input type="password" id="cur-pw"></div>
+        <div class="form-row">
+          <div class="form-field"><label>New Password</label><input type="password" id="new-pw"></div>
+          <div class="form-field"><label>Confirm New Password</label><input type="password" id="new-pw2"></div>
+        </div>
+        <button class="btn btn-black" onclick="changePw()">Update Password</button>
+      </div>
+      <div class="settings-group">
+        <h4>Data Backup</h4>
+        <div class="form-field">
+          <label>Export</label>
+          <div class="hint" style="margin-bottom:12px">Download all albums and content as a JSON file.</div>
+          <button class="btn btn-white" onclick="exportData()">Download Backup</button>
+        </div>
+        <div class="form-field" style="margin-top:20px">
+          <label>Import</label>
+          <div class="hint" style="margin-bottom:12px">Restore from a JSON backup. Overwrites current data.</div>
+          <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)">
+          <button class="btn btn-white" onclick="document.getElementById('import-file').click()">Upload Backup File</button>
+        </div>
+      </div>
+      <div class="settings-group danger-zone">
+        <h4>Danger Zone</h4>
+        <div class="hint" style="margin-bottom:14px">Reset all site data to the default sample content. This cannot be undone.</div>
+        <button class="btn btn-red" onclick="confirmAction('Reset all data to defaults? This cannot be undone.',doReset)">Reset to Defaults</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ALBUM MODAL -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="modal-hd">
+      <h3 id="modal-ttl">New Album</h3>
+      <button class="mc" onclick="closeModal()">&#x2715;</button>
+    </div>
+    <div class="modal-bd">
+      <input type="hidden" id="edit-id">
+      <div class="form-row">
+        <div class="form-field">
+          <label>Album Title *</label>
+          <input type="text" id="m-title" placeholder="e.g. Golden Light">
+        </div>
+        <div class="form-field">
+          <label>Tags (comma separated)</label>
+          <input type="text" id="m-tags" placeholder="e.g. Portrait, Nature">
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Description</label>
+        <textarea id="m-desc" placeholder="A short description..."></textarea>
+      </div>
+      <div class="form-field">
+        <label>Cover Image URL</label>
+        <input type="text" id="m-cover" placeholder="https://...">
+        <div class="hint">Full-screen image shown on the homepage. Leave blank to auto-use the first image.</div>
+      </div>
+
+      <div class="imgs-header">
+        <h4>Images</h4>
+        <span>Drag to reorder &bull; First = cover</span>
+      </div>
+      <div class="imgs-grid" id="modal-imgs"></div>
+
+      <div class="drop-zone" id="dz"
+        onclick="document.getElementById('file-in').click()"
+        ondragover="dzOver(event)" ondragleave="dzLeave()" ondrop="dzDrop(event)">
+        <input type="file" id="file-in" multiple accept="image/*" style="display:none" onchange="filesIn(this)">
+        &#128193; Drop images here or click to upload from device
+      </div>
+
+      <div class="upload-queue" id="upload-queue"></div>
+
+      <div class="add-url-row">
+        <div class="form-field" style="flex:1;margin:0">
+          <input type="text" id="url-in" placeholder="Or paste an image URL (https://...)">
+        </div>
+        <button class="btn btn-white" style="flex-shrink:0" onclick="addUrl()">Add</button>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-white" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-black" onclick="saveAlbum()">Save Album</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM -->
+<div class="confirm-bg" id="confirm-bg">
+  <div class="confirm-box">
+    <p id="confirm-msg"></p>
+    <div class="cbtns">
+      <button class="btn btn-white" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-red" id="confirm-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-msg" id="toast"></div>
+
+<script>
+const DB_KEY = 'sns_data';
+const PW_KEY = 'sns_admin_pw';
+const DEFAULT_PW = 'admin123';
+const CL_CLOUD = 'djj9u3ciy';
+const CL_PRESET = 'ShortsAndStories';
+const CL_FOLDER = 'shots-and-stories';
+const DEFAULT_DATA = {
+  albums: [
+    { id:'a1', title:'Golden Light', description:'Photography is a way of feeling, of touching, of loving. What you have caught on film is captured forever.', tags:['Portrait','Golden Hour'], cover:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1400&q=80', images:['https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1400&q=80','https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=900&q=80','https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=900&q=80','https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=900&q=80'] },
+    { id:'a2', title:'City Whispers', description:'Urban geometry, solitude in crowds, and the quiet poetry hidden in concrete streets.', tags:['Urban','Street'], cover:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1400&q=80', images:['https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1400&q=80','https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=900&q=80','https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=900&q=80','https://images.unsplash.com/photo-1514565131-fce0801e6f7e?w=900&q=80'] },
+    { id:'a3', title:'Still Water', description:'Reflections, stillness, and the meditative calm of nature\'s quieter moments by the lake.', tags:['Nature','Landscape'], cover:'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=1400&q=80', images:['https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=1400&q=80','https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80','https://images.unsplash.com/photo-1501854140801-50d01698950b?w=900&q=80','https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=900&q=80'] },
+    { id:'a4', title:'Into the Wild', description:'Mountains, mist, and the raw silence of places untouched by time.', tags:['Nature','Mountain'], cover:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1400&q=80', images:['https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1400&q=80','https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=900&q=80','https://images.unsplash.com/photo-1519681393784-d120267933ba?w=900&q=80','https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=900&q=80'] }
+  ],
+  about: { heading:'About Us', photo:'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&q=80', body:'Photography is a way of feeling, of touching, of loving. What you have caught on film is captured forever.\n\nI am based in Bengaluru, chasing light and stories across India and beyond. Every frame here is a short. Every album, a story worth telling.' }
+};
+
+function getPw() { return localStorage.getItem(PW_KEY) || DEFAULT_PW; }
+function getData() { try { const r=localStorage.getItem(DB_KEY); return r?JSON.parse(r):DEFAULT_DATA; } catch(e){return DEFAULT_DATA;} }
+function saveData(d) { localStorage.setItem(DB_KEY,JSON.stringify(d)); }
+
+/* AUTH */
+function doLogin() {
+  if (document.getElementById('pw').value === getPw()) {
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('admin-screen').style.display='block';
+    loadAdmin();
+  } else {
+    document.getElementById('pw-err').style.display='block';
+    document.getElementById('pw').value='';
+  }
+}
+function doLogout() {
+  document.getElementById('admin-screen').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('pw').value='';
+}
+function changePw() {
+  const c=document.getElementById('cur-pw').value;
+  const n=document.getElementById('new-pw').value;
+  const n2=document.getElementById('new-pw2').value;
+  if(c!==getPw()) return toast('Current password incorrect',true);
+  if(!n) return toast('New password cannot be empty',true);
+  if(n!==n2) return toast('Passwords do not match',true);
+  localStorage.setItem(PW_KEY,n);
+  ['cur-pw','new-pw','new-pw2'].forEach(id=>document.getElementById(id).value='');
+  toast('Password updated');
+}
+
+/* TABS */
+function switchTab(name,btn) {
+  document.querySelectorAll('.adm-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.adm-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='about') loadAboutForm();
+}
+
+function loadAdmin() { renderAlbGrid(); loadAboutForm(); }
+
+/* ALBUMS GRID */
+function renderAlbGrid() {
+  const data=getData();
+  const g=document.getElementById('alb-grid');
+  g.innerHTML = data.albums.map(a=>`
+    <div class="alb-card">
+      <div class="alb-card-cover" onclick="editAlbum('${a.id}')">
+        ${a.cover?`<img src="${a.cover}" alt="">`:`<div class="no-cover">&#128247;</div>`}
+        <div class="edit-overlay">Click to Edit</div>
+      </div>
+      <div class="alb-card-body">
+        <h4>${a.title}</h4>
+        <div class="atags">${a.tags.join(' &middot; ')}</div>
+        <div class="acount">${a.images.length} image${a.images.length!==1?'s':''}</div>
+        <div class="alb-card-actions">
+          <button class="btn btn-white" onclick="editAlbum('${a.id}')">Edit</button>
+          <button class="btn btn-red" onclick="confirmAction('Delete album &ldquo;${a.title}&rdquo;? This cannot be undone.',()=>deleteAlbum('${a.id}'))">Delete</button>
+        </div>
+      </div>
+    </div>
+  `).join('') + `
+    <div class="add-new-card" onclick="openModal()">
+      <div class="plus">&#43;</div>
+      <span>New Album</span>
+    </div>`;
+}
+
+/* MODAL */
+let mImgs=[], dragFrom=null;
+
+function openModal() {
+  mImgs=[];
+  document.getElementById('edit-id').value='';
+  document.getElementById('modal-ttl').textContent='New Album';
+  ['m-title','m-tags','m-desc','m-cover','url-in'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('upload-queue').innerHTML='';
+  renderMImgs();
+  document.getElementById('modal').classList.add('open');
+}
+function editAlbum(id) {
+  const a=getData().albums.find(x=>x.id===id);
+  if(!a) return;
+  mImgs=[...a.images];
+  document.getElementById('edit-id').value=id;
+  document.getElementById('modal-ttl').textContent='Edit Album';
+  document.getElementById('m-title').value=a.title;
+  document.getElementById('m-tags').value=a.tags.join(', ');
+  document.getElementById('m-desc').value=a.description;
+  document.getElementById('m-cover').value=a.cover||'';
+  document.getElementById('url-in').value='';
+  document.getElementById('upload-queue').innerHTML='';
+  renderMImgs();
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  mImgs=[];
+  document.getElementById('upload-queue').innerHTML='';
+}
+
+function renderMImgs() {
+  const g=document.getElementById('modal-imgs');
+  if(!mImgs.length) {
+    g.innerHTML=`<div style="grid-column:1/-1;font-size:11px;color:#bbb;letter-spacing:2px;padding:6px 0;text-transform:uppercase">No images yet</div>`;
+    return;
+  }
+  g.innerHTML=mImgs.map((img,i)=>`
+    <div class="img-item-adm" draggable="true"
+      ondragstart="dStart(${i})" ondragover="dOver(event,${i})" ondrop="dDrop(event,${i})" ondragend="dEnd()">
+      <img src="${img}" alt="" onerror="this.parentElement.style.background='#f0f0f0'">
+      ${i===0?`<span class="cover-badge">Cover</span>`:''}
+      <button class="rm-btn" onclick="rmImg(${i})">&#x2715;</button>
+    </div>`).join('');
+}
+
+function dStart(i){dragFrom=i;setTimeout(()=>document.querySelectorAll('.img-item-adm')[i]?.classList.add('dragging'),0);}
+function dOver(e,i){e.preventDefault();document.querySelectorAll('.img-item-adm').forEach(el=>el.classList.remove('drag-over'));document.querySelectorAll('.img-item-adm')[i]?.classList.add('drag-over');}
+function dDrop(e,i){e.preventDefault();if(dragFrom===null||dragFrom===i)return;const m=mImgs.splice(dragFrom,1)[0];mImgs.splice(i,0,m);renderMImgs();dragFrom=null;}
+function dEnd(){document.querySelectorAll('.img-item-adm').forEach(el=>el.classList.remove('dragging','drag-over'));}
+function rmImg(i){mImgs.splice(i,1);renderMImgs();}
+
+function addUrl() {
+  const v=document.getElementById('url-in').value.trim();
+  if(!v||!v.startsWith('http')) return toast('Enter a valid URL starting with http',true);
+  mImgs.push(v);
+  if(mImgs.length===1) document.getElementById('m-cover').value=v;
+  document.getElementById('url-in').value='';
+  renderMImgs();
+}
+function dzOver(e){e.preventDefault();document.getElementById('dz').classList.add('active-dz');}
+function dzLeave(){document.getElementById('dz').classList.remove('active-dz');}
+function dzDrop(e){e.preventDefault();dzLeave();processFiles(Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')));}
+function filesIn(inp){processFiles(Array.from(inp.files));inp.value='';}
+
+/* CLOUDINARY UPLOAD */
+function processFiles(files){
+  files.forEach(f=>{
+    if(!f.type.startsWith('image/')){ toast(f.name+' is not an image',true); return; }
+    const itemId='up'+Date.now()+Math.random().toString(36).slice(2,7);
+    addQueueItem(itemId,f.name);
+    uploadToCloudinary(f,itemId);
+  });
+}
+
+function addQueueItem(id,name){
+  const q=document.getElementById('upload-queue');
+  const el=document.createElement('div');
+  el.className='upload-item';
+  el.id='uq_'+id;
+  el.innerHTML=`
+    <div class="upload-item-name">${name}</div>
+    <div class="upload-bar-track"><div class="upload-bar-fill" id="bar_${id}"></div></div>
+    <div class="upload-status" id="status_${id}">Uploading&hellip;</div>`;
+  q.appendChild(el);
+}
+
+function removeQueueItem(id){
+  const el=document.getElementById('uq_'+id);
+  if(el) el.remove();
+}
+
+function uploadFailed(id,msg){
+  const bar=document.getElementById('bar_'+id);
+  const status=document.getElementById('status_'+id);
+  if(bar) bar.style.background='#c0544a';
+  if(status){ status.textContent=msg; status.classList.add('err'); }
+  toast(msg,true);
+  setTimeout(()=>removeQueueItem(id),3500);
+}
+
+function uploadToCloudinary(file,itemId){
+  const formData=new FormData();
+  formData.append('file',file);
+  formData.append('upload_preset',CL_PRESET);
+  formData.append('folder',CL_FOLDER);
+
+  const xhr=new XMLHttpRequest();
+  xhr.open('POST',`https://api.cloudinary.com/v1_1/${CL_CLOUD}/image/upload`);
+
+  xhr.upload.onprogress=(e)=>{
+    if(!e.lengthComputable) return;
+    const pct=Math.round((e.loaded/e.total)*90);
+    const bar=document.getElementById('bar_'+itemId);
+    if(bar) bar.style.width=pct+'%';
+  };
+
+  xhr.onload=()=>{
+    if(xhr.status>=200 && xhr.status<300){
+      let res;
+      try{ res=JSON.parse(xhr.responseText); }
+      catch(e){ return uploadFailed(itemId,'Bad response from Cloudinary'); }
+      const bar=document.getElementById('bar_'+itemId);
+      const status=document.getElementById('status_'+itemId);
+      if(bar) bar.style.width='100%';
+      if(status){ status.textContent='Done'; status.classList.add('ok'); }
+      mImgs.push(res.secure_url);
+      if(mImgs.length===1) document.getElementById('m-cover').value=res.secure_url;
+      renderMImgs();
+      setTimeout(()=>removeQueueItem(itemId),2000);
+    } else {
+      let msg='Upload failed';
+      try{
+        const err=JSON.parse(xhr.responseText);
+        if(err.error && err.error.message) msg=err.error.message;
+      }catch(e){}
+      uploadFailed(itemId,msg);
+    }
+  };
+
+  xhr.onerror=()=>uploadFailed(itemId,'Network error');
+  xhr.send(formData);
+}
+
+function saveAlbum() {
+  const title=document.getElementById('m-title').value.trim();
+  if(!title) return toast('Album title is required',true);
+  const tags=document.getElementById('m-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const desc=document.getElementById('m-desc').value.trim();
+  const cover=document.getElementById('m-cover').value.trim()||(mImgs[0]||'');
+  const eid=document.getElementById('edit-id').value;
+  const data=getData();
+  if(eid){
+    const idx=data.albums.findIndex(a=>a.id===eid);
+    if(idx>-1) data.albums[idx]={id:eid,title,tags,description:desc,cover,images:[...mImgs]};
+  } else {
+    data.albums.push({id:'a'+Date.now(),title,tags,description:desc,cover,images:[...mImgs]});
+  }
+  saveData(data);
+  closeModal();
+  renderAlbGrid();
+  toast(eid?'Album updated!':'Album created!');
+}
+
+function deleteAlbum(id) {
+  const data=getData();
+  data.albums=data.albums.filter(a=>a.id!==id);
+  saveData(data);
+  renderAlbGrid();
+  toast('Album deleted');
+}
+
+/* ABOUT */
+function loadAboutForm() {
+  const a=getData().about||{};
+  document.getElementById('ab-heading').value=a.heading||'';
+  document.getElementById('ab-photo').value=a.photo||'';
+  document.getElementById('ab-body').value=a.body||'';
+}
+function saveAbout() {
+  const data=getData();
+  data.about={
+    heading:document.getElementById('ab-heading').value.trim(),
+    photo:document.getElementById('ab-photo').value.trim(),
+    body:document.getElementById('ab-body').value
+  };
+  saveData(data);
+  toast('About page saved!');
+}
+
+/* EXPORT / IMPORT / RESET */
+function exportData(){const b=new Blob([JSON.stringify(getData(),null,2)],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='sns-backup.json';a.click();URL.revokeObjectURL(u);toast('Backup downloaded');}
+function importData(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const p=JSON.parse(e.target.result);if(!p.albums)throw new Error();confirmAction('Import this backup? Current data will be overwritten.',()=>{saveData(p);renderAlbGrid();loadAboutForm();toast('Data imported!');});}catch{toast('Invalid backup file',true);}};r.readAsText(f);inp.value='';}
+function doReset(){localStorage.removeItem(DB_KEY);renderAlbGrid();loadAboutForm();toast('Reset to defaults');}
+
+/* CONFIRM */
+function confirmAction(msg,cb){
+  document.getElementById('confirm-msg').innerHTML=msg;
+  document.getElementById('confirm-ok').onclick=()=>{closeConfirm();cb();};
+  document.getElementById('confirm-bg').classList.add('open');
+}
+function closeConfirm(){document.getElementById('confirm-bg').classList.remove('open');}
+
+/* TOAST */
+function toast(msg,err=false){const t=document.getElementById('toast');t.textContent=msg;t.classList.toggle('error',err);t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+/* KEY */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeModal();closeConfirm();}
+});
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.getElementById('confirm-bg').addEventListener('click',function(e){if(e.target===this)closeConfirm();});
+</script>
+</body>
+</html>
