@@ -57,7 +57,7 @@ ul { list-style: none; }
   width: 200px; height: auto;
   margin: 0 auto;
   /* white logo on dark bg — invert the orange/teal colors aren't inverted, just make it fit */
-  filter: brightness(0) invert(1);
+  /* filter: brightness(0) invert(1); */
   opacity: 0.92;
 }
 .panel-logo .logo-tagline {
