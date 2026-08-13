@@ -17,7 +17,7 @@ const DEFAULT_DATA = {
 function getData(){ try{const r=localStorage.getItem(DB_KEY);return r?JSON.parse(r):DEFAULT_DATA;}catch(e){return DEFAULT_DATA;} }
 
 /* PANEL TOGGLE */
-let panelOpen=true;
+let panelOpen=false;
 function togglePanel(){
   panelOpen=!panelOpen;
   const btn=document.getElementById('ham-btn');
@@ -27,7 +27,12 @@ function togglePanel(){
   else { panel.classList.toggle('visible',panelOpen); }
 }
 function initPanelState(){
-  if(window.innerWidth<=900){ panelOpen=false; document.getElementById('left-panel').classList.remove('visible'); document.getElementById('ham-btn').classList.remove('open'); }
+  panelOpen=false;
+  const btn=document.getElementById('ham-btn');
+  const panel=document.getElementById('left-panel');
+  btn.classList.remove('open');
+  if(window.innerWidth>900){ panel.classList.add('hidden'); }
+  else { panel.classList.remove('visible'); }
 }
 
 /* DRAWER */
