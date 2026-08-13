@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galleries — Shots & Stories</title>
+<meta name="description" content="Browse photo galleries from Shots & Stories — portraits, landscapes, and street stories told in light.">
+<link rel="canonical" href="https://shotsandstories.github.io/website/galleries.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Shots & Stories">
+<meta property="og:title" content="Galleries — Shots & Stories">
+<meta property="og:description" content="Browse photo galleries from Shots & Stories — portraits, landscapes, and street stories told in light.">
+<meta property="og:url" content="https://shotsandstories.github.io/website/galleries.html">
+<meta property="og:image" content="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1400&q=80">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Galleries — Shots & Stories">
+<meta name="twitter:description" content="Browse photo galleries from Shots & Stories — portraits, landscapes, and street stories told in light.">
+<meta name="twitter:image" content="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1400&q=80">
+<link rel="stylesheet" href="assets/fonts.css">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+<button id="ham-btn" onclick="togglePanel()" aria-label="Toggle menu">
+  <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+</button>
+
+<!-- LEFT PANEL -->
+<div id="left-panel">
+  <div class="panel-logo">
+    <img src="assets/logo.jpg" alt="Shots & Stories">
+  </div>
+  <nav>
+    <ul>
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="galleries.html" class="nav-link active">Galleries</a></li>
+      <li><a href="index.html#section-about" class="nav-link">About</a></li>
+      <li><a href="index.html#section-contact" class="nav-link">Contact</a></li>
+    </ul>
+  </nav>
+  <div class="panel-footer">
+    &copy; 2025 Shots &amp; Stories<br>
+    <a href="admin.html" target="_blank">Admin Panel</a>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div id="right-panel">
+  <section id="section-galleries" class="section-wrap" style="padding-top:100px">
+    <p class="section-label">Portfolio</p>
+    <h2 class="section-heading">Galleries</h2>
+    <div id="galleries-list"></div>
+  </section>
+</div>
+
+<!-- ALBUM DRAWER -->
+<div id="album-drawer">
+  <div class="drawer-topbar">
+    <button class="drawer-back" onclick="closeDrawer()">&#8592; Back</button>
+    <button class="drawer-close-x" onclick="closeDrawer()">&#x2715;</button>
+  </div>
+  <h2 id="drawer-title"></h2>
+  <div id="drawer-cats"></div>
+  <p id="drawer-desc"></p>
+  <div class="album-images" id="drawer-images"></div>
+  <div class="drawer-nav">
+    <button onclick="drawerNav(-1)">&#8592; Prev</button>
+    <span class="sep">/</span>
+    <button onclick="drawerNav(1)">Next &#8594;</button>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <button class="lb-close" onclick="lbClose()">&#x2715;</button>
+  <button class="lb-arrow left" onclick="lbMove(-1)">&#8249;</button>
+  <img id="lb-img" src="" alt="">
+  <button class="lb-arrow right" onclick="lbMove(1)">&#8250;</button>
+  <div class="lb-cap" id="lb-cap"></div>
+</div>
+<div class="toast-msg" id="toast"></div>
+
+<script src="assets/site.js"></script>
+<script>
+/* GALLERIES */
+function renderGalleries(){
+  const data=getData(); const el=document.getElementById('galleries-list');
+  if(!data.albums.length){el.innerHTML=`<p style="color:#aaa">No albums yet.</p>`;return;}
+  el.innerHTML=data.albums.map(a=>{
+    const thumbs=[...a.images.slice(0,3)]; while(thumbs.length<3)thumbs.push('');
+    return `<div class="gallery-section">
+      <div class="gallery-section-head">
+        <div class="gshead-title" onclick="openDrawer('${a.id}')">${a.title}</div>
+        <div class="gshead-cats">${a.tags.map((t,i)=>i===0?t:`<span class="sep">/</span>${t}`).join('')}</div>
+      </div>
+      <div class="gallery-thumbs">${thumbs.map(img=>`<div class="gallery-thumb" onclick="openDrawer('${a.id}')">${img?`<img src="${img}" loading="lazy" alt="">`:''}</div>`).join('')}</div>
+      <button class="see-more-btn" onclick="openDrawer('${a.id}')">See More</button>
+    </div>`;
+  }).join('');
+}
+
+renderGalleries();
+</script>
+</body>
+</html>
