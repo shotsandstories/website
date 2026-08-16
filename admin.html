@@ -238,7 +238,14 @@ img { display: block; max-width: 100%; }
   background: #f0f0f0; border: 1px solid #eee;
   overflow: hidden; cursor: grab;
 }
-.img-item-adm img { width: 100%; height: 100%; object-fit: cover; }
+.img-item-adm img, .img-item-adm video { width: 100%; height: 100%; object-fit: cover; }
+.img-item-adm .video-badge-adm {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(0,0,0,0.55); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; pointer-events: none;
+}
 .img-item-adm.dragging { opacity: 0.35; }
 .img-item-adm.drag-over { border: 2px dashed #1a1a1a; }
 .img-item-adm .rm-btn {
@@ -524,7 +531,7 @@ img { display: block; max-width: 100%; }
       </div>
 
       <div class="imgs-header">
-        <h4>Images</h4>
+        <h4>Images &amp; Videos</h4>
         <span>Drag to reorder &bull; First = cover</span>
       </div>
       <div class="imgs-grid" id="modal-imgs"></div>
@@ -532,8 +539,8 @@ img { display: block; max-width: 100%; }
       <div class="drop-zone" id="dz"
         onclick="document.getElementById('file-in').click()"
         ondragover="dzOver(event)" ondragleave="dzLeave()" ondrop="dzDrop(event)">
-        <input type="file" id="file-in" multiple accept="image/*" style="display:none" onchange="filesIn(this)">
-        &#128193; Drop images here or click to upload from device
+        <input type="file" id="file-in" multiple accept="image/*,video/*" style="display:none" onchange="filesIn(this)">
+        &#128193; Drop photos or videos here or click to upload from device
       </div>
 
       <div class="upload-queue" id="upload-queue"></div>
@@ -703,7 +710,9 @@ function renderMImgs() {
   g.innerHTML=mImgs.map((img,i)=>`
     <div class="img-item-adm" draggable="true"
       ondragstart="dStart(${i})" ondragover="dOver(event,${i})" ondrop="dDrop(event,${i})" ondragend="dEnd()">
-      <img src="${img}" alt="" onerror="this.parentElement.style.background='#f0f0f0'">
+      ${isVideoUrl(img)
+        ? `<video src="${img}" muted preload="metadata"></video><span class="video-badge-adm">&#9654;</span>`
+        : `<img src="${img}" alt="" onerror="this.parentElement.style.background='#f0f0f0'">`}
       ${i===0?`<span class="cover-badge">Cover</span>`:''}
       <button class="rm-btn" onclick="rmImg(${i})">&#x2715;</button>
     </div>`).join('');
@@ -725,8 +734,14 @@ function addUrl() {
 }
 function dzOver(e){e.preventDefault();document.getElementById('dz').classList.add('active-dz');}
 function dzLeave(){document.getElementById('dz').classList.remove('active-dz');}
-function dzDrop(e){e.preventDefault();dzLeave();processFiles(Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')));}
+function dzDrop(e){e.preventDefault();dzLeave();processFiles(Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')||f.type.startsWith('video/')));}
 function filesIn(inp){processFiles(Array.from(inp.files));inp.value='';}
+
+/* Photos and videos share the same album.images string array — a URL is
+   recognized as video by Cloudinary's own URL convention
+   (.../video/upload/... vs .../image/upload/...), since that's what
+   uploadToCloudinary() below actually produces. No schema change needed. */
+function isVideoUrl(url){ return typeof url==='string' && url.indexOf('/video/upload/')!==-1; }
 
 /* CLOUDINARY UPLOAD */
 const MAX_DIM = 2400;       // longest side in px — plenty for a full-screen lightbox, cuts most camera exports well under Cloudinary's per-file cap
@@ -734,17 +749,27 @@ const JPEG_QUALITY = 0.86;  // re-encode quality/size balance for photography
 
 function processFiles(files){
   files.forEach(f=>{
-    if(!f.type.startsWith('image/')){ toast(f.name+' is not an image',true); return; }
+    const isImg=f.type.startsWith('image/');
+    const isVid=f.type.startsWith('video/');
+    if(!isImg && !isVid){ toast(f.name+' is not an image or video',true); return; }
     const itemId='up'+Date.now()+Math.random().toString(36).slice(2,7);
     addQueueItem(itemId,f.name,'upload-queue');
     const onDone=(url)=>{
       mImgs.push(url);
-      if(mImgs.length===1) document.getElementById('m-cover').value=url;
+      // only auto-fill Cover from a photo, never a video, and only if it's still empty
+      if(!isVideoUrl(url) && !document.getElementById('m-cover').value.trim()) document.getElementById('m-cover').value=url;
       renderMImgs();
     };
-    resizeImage(f,itemId)
-      .then(blob=>uploadToCloudinary(blob,itemId,f.name,onDone))
-      .catch(()=>uploadToCloudinary(f,itemId,f.name,onDone)); // resize failed (odd format, etc.) — fall back to the original file
+    if(isVid){
+      // no client-side compression for video — canvas can't touch it, and
+      // there's no lightweight in-browser transcoder worth adding here.
+      // Cloudinary's own error (size cap, format, etc.) surfaces as-is via uploadFailed.
+      uploadToCloudinary(f,itemId,f.name,onDone,'video');
+    } else {
+      resizeImage(f,itemId)
+        .then(blob=>uploadToCloudinary(blob,itemId,f.name,onDone,'image'))
+        .catch(()=>uploadToCloudinary(f,itemId,f.name,onDone,'image')); // resize failed (odd format, etc.) — fall back to the original file
+    }
   });
 }
 
@@ -801,18 +826,22 @@ function uploadFailed(id,msg){
 
 /* Generic Cloudinary uploader — callers pass onSuccess(secureUrl) to decide
    what to do with the result (push into an album's image list, a hero
-   slide, etc.) instead of this function assuming one specific use. */
-function uploadToCloudinary(file,itemId,filename,onSuccess){
+   slide, etc.) instead of this function assuming one specific use.
+   resourceType picks which Cloudinary endpoint to hit — 'image' (default)
+   or 'video'; Cloudinary treats these as separate upload endpoints even
+   under the same account/preset. */
+function uploadToCloudinary(file,itemId,filename,onSuccess,resourceType){
+  resourceType=resourceType||'image';
   const formData=new FormData();
-  formData.append('file',file,filename||file.name||'photo.jpg');
+  formData.append('file',file,filename||file.name||'upload');
   formData.append('upload_preset',CL_PRESET);
   formData.append('folder',CL_FOLDER);
 
   const status0=document.getElementById('status_'+itemId);
-  if(status0) status0.textContent='Uploading…';
+  if(status0) status0.textContent=resourceType==='video'?'Uploading video…':'Uploading…';
 
   const xhr=new XMLHttpRequest();
-  xhr.open('POST',`https://api.cloudinary.com/v1_1/${CL_CLOUD}/image/upload`);
+  xhr.open('POST',`https://api.cloudinary.com/v1_1/${CL_CLOUD}/${resourceType}/upload`);
 
   xhr.upload.onprogress=(e)=>{
     if(!e.lengthComputable) return;
@@ -851,7 +880,7 @@ function saveAlbum() {
   if(!title) return toast('Album title is required',true);
   const tags=document.getElementById('m-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
   const desc=document.getElementById('m-desc').value.trim();
-  const cover=document.getElementById('m-cover').value.trim()||(mImgs[0]||'');
+  const cover=document.getElementById('m-cover').value.trim()||(mImgs.find(u=>!isVideoUrl(u))||mImgs[0]||'');
   const eid=document.getElementById('edit-id').value;
   const data=getData();
   if(eid){

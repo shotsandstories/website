@@ -77,6 +77,7 @@
   <button class="lb-close" onclick="lbClose()">&#x2715;</button>
   <button class="lb-arrow left" onclick="lbMove(-1)">&#8249;</button>
   <img id="lb-img" src="" alt="">
+  <video id="lb-video" controls playsinline></video>
   <button class="lb-arrow right" onclick="lbMove(1)">&#8250;</button>
   <div class="lb-cap" id="lb-cap"></div>
 </div>
@@ -95,7 +96,13 @@ function renderGalleries(){
         <div class="gshead-title" onclick="openDrawer('${a.id}')">${a.title}</div>
         <div class="gshead-cats">${a.tags.map((t,i)=>i===0?t:`<span class="sep">/</span>${t}`).join('')}</div>
       </div>
-      <div class="gallery-thumbs">${thumbs.map(img=>`<div class="gallery-thumb" onclick="openDrawer('${a.id}')">${img?`<img src="${img}" loading="lazy" alt="">`:''}</div>`).join('')}</div>
+      <div class="gallery-thumbs">${thumbs.map(img=>{
+        if(!img) return '<div class="gallery-thumb" onclick="openDrawer(\''+a.id+'\')"></div>';
+        const media=isVideoUrl(img)
+          ? `<video src="${img}" muted preload="metadata"></video><span class="video-badge">&#9654;</span>`
+          : `<img src="${img}" loading="lazy" alt="">`;
+        return `<div class="gallery-thumb" onclick="openDrawer('${a.id}')">${media}</div>`;
+      }).join('')}</div>
       <button class="see-more-btn" onclick="openDrawer('${a.id}')">See More</button>
     </div>`;
   }).join('');

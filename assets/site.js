@@ -23,6 +23,12 @@ const DEFAULT_DATA = {
 };
 function getData(){ try{const r=localStorage.getItem(DB_KEY);const d=r?JSON.parse(r):DEFAULT_DATA;if(!d.hero)d.hero=DEFAULT_DATA.hero;return d;}catch(e){return DEFAULT_DATA;} }
 
+/* Videos and photos share the same album.images string array — a URL is
+   recognized as video purely by Cloudinary's own URL convention
+   (.../video/upload/... vs .../image/upload/...), since that's what the
+   admin's upload pipeline actually produces. No schema change needed. */
+function isVideoUrl(url){ return typeof url==='string' && url.indexOf('/video/upload/')!==-1; }
+
 /* PANEL TOGGLE */
 let panelOpen=false;
 function togglePanel(){
@@ -54,17 +60,40 @@ function openDrawer(id){
   const imgs=a.images; let rows=[];
   if(imgs.length>0)rows.push({cols:1,imgs:[imgs[0]]});
   for(let i=1;i<imgs.length;i+=2)rows.push({cols:Math.min(2,imgs.length-i),imgs:imgs.slice(i,i+2)});
-  document.getElementById('drawer-images').innerHTML=rows.map(row=>`<div class="album-img-row row-${row.cols}">${row.imgs.map(img=>{const gi=imgs.indexOf(img);return `<div class="album-img-item" onclick="lbOpen(${gi})"><img src="${img}" loading="lazy" alt=""><button class="share-btn">Share</button></div>`;}).join('')}</div>`).join('');
+  document.getElementById('drawer-images').innerHTML=rows.map(row=>`<div class="album-img-row row-${row.cols}">${row.imgs.map(img=>{
+    const gi=imgs.indexOf(img);
+    const media=isVideoUrl(img)
+      ? `<video src="${img}" muted preload="metadata"></video><span class="video-badge">&#9654;</span>`
+      : `<img src="${img}" loading="lazy" alt="">`;
+    return `<div class="album-img-item" onclick="lbOpen(${gi})">${media}<button class="share-btn">Share</button></div>`;
+  }).join('')}</div>`).join('');
   const drawer=document.getElementById('album-drawer'); drawer.classList.add('open'); drawer.scrollTo(0,0);
 }
 function closeDrawer(){ document.getElementById('album-drawer').classList.remove('open'); }
 function drawerNav(dir){ const data=getData(); const idx=data.albums.findIndex(a=>a.id===currentAlbumId); const next=data.albums[(idx+dir+data.albums.length)%data.albums.length]; if(next)openDrawer(next.id); }
 
-/* LIGHTBOX */
+/* LIGHTBOX — shows either #lb-img or #lb-video depending on the current item */
 function lbOpen(i){lbIdx=i;document.getElementById('lightbox').classList.add('open');lbRefresh();document.addEventListener('keydown',lbKey);}
-function lbClose(){document.getElementById('lightbox').classList.remove('open');document.removeEventListener('keydown',lbKey);}
+function lbClose(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.removeEventListener('keydown',lbKey);
+  const v=document.getElementById('lb-video'); v.pause();
+}
 function lbMove(d){lbIdx=(lbIdx+d+lbImgs.length)%lbImgs.length;lbRefresh();}
-function lbRefresh(){document.getElementById('lb-img').src=lbImgs[lbIdx];document.getElementById('lb-cap').textContent=`${lbIdx+1} / ${lbImgs.length}`;}
+function lbRefresh(){
+  const url=lbImgs[lbIdx];
+  const imgEl=document.getElementById('lb-img');
+  const vidEl=document.getElementById('lb-video');
+  if(isVideoUrl(url)){
+    imgEl.style.display='none'; imgEl.removeAttribute('src');
+    vidEl.style.display='block'; vidEl.src=url;
+  } else {
+    vidEl.pause(); vidEl.removeAttribute('src'); vidEl.load();
+    vidEl.style.display='none';
+    imgEl.style.display='block'; imgEl.src=url;
+  }
+  document.getElementById('lb-cap').textContent=`${lbIdx+1} / ${lbImgs.length}`;
+}
 function lbKey(e){if(e.key==='Escape')lbClose();if(e.key==='ArrowLeft')lbMove(-1);if(e.key==='ArrowRight')lbMove(1);}
 document.getElementById('lightbox').addEventListener('click',function(e){if(e.target===this)lbClose();});
 
