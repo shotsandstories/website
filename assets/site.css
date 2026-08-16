@@ -1,7 +1,7 @@
 /* ═══ RESET ═══ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
-body { font-family: 'Josefin Sans', sans-serif; font-weight: 400; color: #333; background: #fff; display: flex; overflow: hidden; }
+body { font-family: var(--font-main); font-weight: 400; color: #333; background: #fff; display: flex; overflow: hidden; }
 a { text-decoration: none; color: inherit; }
 img { display: block; max-width: 100%; }
 ul { list-style: none; }
@@ -12,6 +12,7 @@ ul { list-style: none; }
   --teal:   #2A7D6F;
   --dark:   #1a1a1a;
   --light:  #f9f9f9;
+  --font-main: 'Josefin Sans', sans-serif;
 }
 
 /* ═══ HAMBURGER ═══ */
@@ -61,7 +62,7 @@ ul { list-style: none; }
   opacity: 0.92;
 }
 .panel-logo .logo-tagline {
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: var(--font-main);
   font-size: 9px; font-weight: 300; color: #666;
   letter-spacing: 5px; text-transform: uppercase; margin-top: 10px;
 }
@@ -70,7 +71,7 @@ ul { list-style: none; }
 nav { width: 100%; position: relative; z-index: 1; }
 nav ul { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 nav ul li a {
-  display: block; font-family: 'Josefin Sans', sans-serif;
+  display: block; font-family: var(--font-main);
   font-size: 11px; font-weight: 400;
   letter-spacing: 4px; text-transform: uppercase;
   color: #888; padding: 10px 16px; transition: color 0.25s; position: relative;
@@ -88,7 +89,7 @@ nav ul li a.active::after { width: 20px; }
 .panel-footer {
   text-align: center; font-size: 9px; color: #444;
   letter-spacing: 2px; line-height: 1.9; position: relative; z-index: 1;
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: var(--font-main);
 }
 .panel-footer a { color: #555; transition: color 0.2s; }
 .panel-footer a:hover { color: var(--teal); }
@@ -119,14 +120,14 @@ nav ul li a.active::after { width: 20px; }
 /* hero text */
 .hero-text { position: absolute; bottom: 0; left: 0; right: 0; padding: 0 80px 80px; z-index: 10; }
 .hero-slide-label {
-  font-family: 'Josefin Sans', sans-serif; font-size: 10px; font-weight: 300;
+  font-family: var(--font-main); font-size: 10px; font-weight: 300;
   letter-spacing: 6px; text-transform: uppercase; color: rgba(255,255,255,0.55);
   margin-bottom: 14px;
   transform: translateY(20px); opacity: 0;
   transition: transform 0.8s 0.3s ease, opacity 0.8s 0.3s ease;
 }
 .hero-slide-title {
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: var(--font-main);
   font-size: clamp(36px, 5vw, 68px); font-weight: 700;
   color: #fff; line-height: 1.0; margin-bottom: 16px;
   letter-spacing: 3px; text-transform: uppercase;
@@ -135,7 +136,7 @@ nav ul li a.active::after { width: 20px; }
   text-shadow: 0 4px 40px rgba(0,0,0,0.3);
 }
 .hero-slide-cats {
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: var(--font-main);
   font-size: 11px; font-weight: 300; letter-spacing: 4px;
   color: rgba(255,255,255,0.6); text-transform: uppercase;
   transform: translateY(20px); opacity: 0;
@@ -145,7 +146,7 @@ nav ul li a.active::after { width: 20px; }
 .hero-slide-cats .sep { margin: 0 10px; opacity: 0.4; }
 .hero-view-btn {
   display: inline-block; border: 1px solid rgba(255,255,255,0.6); color: #fff;
-  font-family: 'Josefin Sans', sans-serif; font-size: 10px; font-weight: 400;
+  font-family: var(--font-main); font-size: 10px; font-weight: 400;
   letter-spacing: 4px; text-transform: uppercase;
   padding: 12px 32px; cursor: pointer; background: transparent;
   transform: translateY(20px); opacity: 0;
@@ -178,7 +179,7 @@ nav ul li a.active::after { width: 20px; }
   z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 8px;
   animation: scrollBounce 2.2s infinite;
 }
-.hero-scroll-hint span { font-size: 9px; letter-spacing: 4px; text-transform: uppercase; color: rgba(255,255,255,0.35); font-family: 'Josefin Sans', sans-serif; }
+.hero-scroll-hint span { font-size: 9px; letter-spacing: 4px; text-transform: uppercase; color: rgba(255,255,255,0.35); font-family: var(--font-main); }
 .hero-scroll-hint .arrow-down { width: 1px; height: 36px; background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent); }
 @keyframes scrollBounce { 0%,100%{ transform:translateX(-50%) translateY(0);} 50%{transform:translateX(-50%) translateY(6px);} }
 
@@ -186,11 +187,11 @@ nav ul li a.active::after { width: 20px; }
 .section-wrap { padding: 72px 64px 84px; }
 .section-wrap.alt { background: #f9f9f9; }
 .section-label {
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: var(--font-main);
   font-size: 10px; letter-spacing: 5px; text-transform: uppercase; color: var(--teal); margin-bottom: 6px;
 }
 .section-heading {
-  font-family: 'Josefin Sans', sans-serif; font-weight: 700;
+  font-family: var(--font-main); font-weight: 700;
   font-size: 28px; letter-spacing: 3px; text-transform: uppercase; color: var(--dark);
   padding-bottom: 22px; margin-bottom: 44px; border-bottom: 1px solid #eee;
 }
@@ -199,19 +200,19 @@ nav ul li a.active::after { width: 20px; }
 .gallery-section { margin-bottom: 70px; }
 .gallery-section-head { margin-bottom: 18px; }
 .gshead-title {
-  font-family: 'Josefin Sans', sans-serif; font-weight: 600;
+  font-family: var(--font-main); font-weight: 600;
   font-size: 22px; letter-spacing: 2px; text-transform: uppercase; color: var(--dark);
   margin-bottom: 5px; cursor: pointer; display: inline-block; transition: color 0.2s;
 }
 .gshead-title:hover { color: var(--orange); }
-.gshead-cats { font-family: 'Josefin Sans', sans-serif; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--teal); }
+.gshead-cats { font-family: var(--font-main); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--teal); }
 .gshead-cats .sep { margin: 0 8px; opacity: 0.4; }
 .gallery-thumbs { display: grid; grid-template-columns: repeat(3,1fr); gap: 4px; margin-bottom: 12px; }
 .gallery-thumb { aspect-ratio: 4/3; overflow: hidden; cursor: pointer; background: #eee; position: relative; }
 .gallery-thumb img, .gallery-thumb video { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94); }
 .gallery-thumb:hover img { transform: scale(1.07); }
 .see-more-btn {
-  font-family: 'Josefin Sans', sans-serif; font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: #aaa;
+  font-family: var(--font-main); font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: #aaa;
   background: none; border: none; cursor: pointer; font-weight: 400; padding: 4px 0; transition: color 0.2s;
 }
 .see-more-btn:hover { color: var(--orange); }
@@ -220,18 +221,18 @@ nav ul li a.active::after { width: 20px; }
 .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
 .about-img-wrap img { width: 100%; display: block; }
 .about-content h3 {
-  font-family: 'Josefin Sans', sans-serif; font-weight: 700;
+  font-family: var(--font-main); font-weight: 700;
   font-size: 18px; letter-spacing: 3px; text-transform: uppercase;
   color: var(--dark); margin-bottom: 18px;
 }
-.about-content p { font-family: 'Josefin Sans', sans-serif; font-size: 14px; font-weight: 300; line-height: 1.9; color: #666; margin-bottom: 14px; }
+.about-content p { font-family: var(--font-main); font-size: 14px; font-weight: 300; line-height: 1.9; color: #666; margin-bottom: 14px; }
 
 /* ═══ CONTACT ═══ */
 .contact-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 620px; }
 .contact-form .full { grid-column: 1/-1; }
 .contact-form input, .contact-form textarea {
   width: 100%; border: 1px solid #ddd; background: #fafafa;
-  font-family: 'Josefin Sans', sans-serif; font-size: 12px; font-weight: 300;
+  font-family: var(--font-main); font-size: 12px; font-weight: 300;
   letter-spacing: 1px; color: #333; padding: 13px 16px; outline: none; resize: none; transition: border-color 0.25s;
 }
 .contact-form input:focus, .contact-form textarea:focus { border-color: var(--teal); background: #fff; }
@@ -239,12 +240,12 @@ nav ul li a.active::after { width: 20px; }
 .btn-send {
   grid-column: 1/-1; justify-self: start;
   background: var(--orange); color: #fff; border: none;
-  font-family: 'Josefin Sans', sans-serif; font-size: 10px; font-weight: 600;
+  font-family: var(--font-main); font-size: 10px; font-weight: 600;
   letter-spacing: 4px; text-transform: uppercase;
   padding: 14px 36px; cursor: pointer; transition: background 0.25s;
 }
 .btn-send:hover { background: #b84314; }
-.cf-note { grid-column: 1/-1; font-size: 10px; color: #bbb; letter-spacing: 2px; font-family: 'Josefin Sans', sans-serif; }
+.cf-note { grid-column: 1/-1; font-size: 10px; color: #bbb; letter-spacing: 2px; font-family: var(--font-main); }
 
 /* ═══ ALBUM DRAWER ═══ */
 #album-drawer {
@@ -261,7 +262,7 @@ nav ul li a.active::after { width: 20px; }
   display: flex; align-items: center; justify-content: space-between;
 }
 .drawer-back {
-  font-family: 'Josefin Sans', sans-serif; font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+  font-family: var(--font-main); font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
   color: #999; background: none; border: none; cursor: pointer; font-weight: 400;
   display: flex; align-items: center; gap: 8px; transition: color 0.2s;
 }
@@ -269,12 +270,12 @@ nav ul li a.active::after { width: 20px; }
 .drawer-close-x { background: none; border: none; font-size: 22px; color: #ccc; cursor: pointer; transition: color 0.2s; }
 .drawer-close-x:hover { color: var(--orange); }
 #drawer-title {
-  font-family: 'Josefin Sans', sans-serif; font-weight: 700;
+  font-family: var(--font-main); font-weight: 700;
   font-size: 28px; letter-spacing: 3px; text-transform: uppercase; color: var(--dark); margin-bottom: 6px;
 }
-#drawer-cats { font-family: 'Josefin Sans', sans-serif; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--teal); margin-bottom: 14px; }
+#drawer-cats { font-family: var(--font-main); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--teal); margin-bottom: 14px; }
 #drawer-cats .sep { margin: 0 8px; opacity: 0.4; }
-#drawer-desc { font-family: 'Josefin Sans', sans-serif; font-size: 14px; font-weight: 300; line-height: 1.8; color: #666; max-width: 680px; margin-bottom: 32px; }
+#drawer-desc { font-family: var(--font-main); font-size: 14px; font-weight: 300; line-height: 1.8; color: #666; max-width: 680px; margin-bottom: 32px; }
 .album-images { display: flex; flex-direction: column; gap: 4px; }
 .album-img-row { display: grid; gap: 4px; }
 .album-img-row.row-1 { grid-template-columns: 1fr; }
@@ -295,14 +296,14 @@ nav ul li a.active::after { width: 20px; }
 .share-btn {
   position: absolute; bottom: 12px; right: 12px;
   background: rgba(0,0,0,0.55); color: #fff;
-  font-family: 'Josefin Sans', sans-serif; font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+  font-family: var(--font-main); font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
   padding: 6px 14px; cursor: pointer; border: none; opacity: 0; transition: opacity 0.2s;
 }
 .album-img-item:hover .share-btn { opacity: 1; }
 .drawer-nav { margin-top: 40px; padding-top: 22px; border-top: 1px solid #eee; display: flex; gap: 20px; align-items: center; }
 .drawer-nav button {
   background: none; border: none; cursor: pointer;
-  font-family: 'Josefin Sans', sans-serif; font-weight: 400;
+  font-family: var(--font-main); font-weight: 400;
   font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: #999; transition: color 0.2s;
 }
 .drawer-nav button:hover { color: var(--orange); }
@@ -320,12 +321,12 @@ nav ul li a.active::after { width: 20px; }
 .lb-arrow:hover { background: rgba(255,255,255,0.18); }
 .lb-arrow.left { left: 16px; }
 .lb-arrow.right { right: 16px; }
-.lb-cap { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.4); font-family: 'Josefin Sans', sans-serif; font-size: 11px; letter-spacing: 3px; }
+.lb-cap { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.4); font-family: var(--font-main); font-size: 11px; letter-spacing: 3px; }
 
 /* ═══ TOAST ═══ */
 .toast-msg {
   position: fixed; bottom: 28px; right: 28px; background: var(--dark); color: #fff;
-  font-family: 'Josefin Sans', sans-serif; font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  font-family: var(--font-main); font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
   padding: 12px 22px; z-index: 3000; transform: translateY(60px); opacity: 0;
   transition: all 0.35s ease; pointer-events: none;
 }

@@ -37,6 +37,7 @@
       <li><a href="#" class="nav-link active" data-sec="home">Home</a></li>
       <li><a href="galleries" class="nav-link">Galleries</a></li>
       <li><a href="#" class="nav-link" data-sec="about">About</a></li>
+      <li id="nav-instagram-li" style="display:none"><a href="#" class="nav-link" data-sec="instagram">Instagram</a></li>
       <li><a href="#" class="nav-link" data-sec="contact">Contact</a></li>
     </ul>
   </nav>
@@ -62,6 +63,12 @@
       <div class="about-img-wrap"><img id="about-img" src="https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&q=80" alt="About" loading="lazy"></div>
       <div class="about-content" id="about-body-content"></div>
     </div>
+  </section>
+
+  <section id="section-instagram" class="section-wrap alt" style="display:none">
+    <p class="section-label">Follow Along</p>
+    <h2 class="section-heading">Instagram</h2>
+    <div id="instagram-embed"></div>
   </section>
 
   <section id="section-contact" class="section-wrap">
@@ -131,7 +138,7 @@ function buildHero(){
       <div class="slide-gradient"></div>
       <div class="hero-text">
         <div class="hero-slide-label">${String(i+1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')}${s.label?` &nbsp;&mdash;&nbsp; ${s.label}`:''}</div>
-        <div class="hero-slide-title">${s.title||''}</div>
+        ${s.title?`<div class="hero-slide-title">${s.title}</div>`:''}
         ${album?`<div class="hero-slide-cats">${album.tags.map((c,j)=>j===0?c:`<span class="sep">/</span>${c}`).join('')}</div>`:''}
         ${album?`<button class="hero-view-btn" onclick="openDrawer('${album.id}')">View Album</button>`:`<a class="hero-view-btn" href="galleries">View Album</a>`}
       </div>
@@ -160,6 +167,39 @@ function renderAbout(){
   document.getElementById('about-heading').textContent=a.heading||'About Us';
   if(a.photo)document.getElementById('about-img').src=a.photo;
   document.getElementById('about-body-content').innerHTML=(a.body||'').split('\n\n').map(p=>p.trim()).filter(Boolean).map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
+}
+
+/* INSTAGRAM — hidden entirely unless admin has pasted an embed snippet in
+   the Theme tab (e.g. from snapwidget.com). Deliberately excluded from
+   scroll-spy secIds below when hidden: a display:none section's offsetTop
+   reads as 0, which would otherwise make the scroll-spy always think it's
+   "already passed" and wrongly steal the active nav highlight. */
+function renderInstagram(){
+  const code=(getData().theme||{}).instagramEmbedCode;
+  const section=document.getElementById('section-instagram');
+  const navLi=document.getElementById('nav-instagram-li');
+  if(!code){
+    section.style.display='none';
+    navLi.style.display='none';
+    return false;
+  }
+  section.style.display='';
+  navLi.style.display='';
+  const container=document.getElementById('instagram-embed');
+  // innerHTML doesn't execute <script> tags — pull them out and recreate as
+  // real script elements so widget loaders (SnapWidget etc.) actually run
+  const temp=document.createElement('div');
+  temp.innerHTML=code;
+  const scripts=[...temp.querySelectorAll('script')];
+  scripts.forEach(s=>s.remove());
+  container.innerHTML=temp.innerHTML;
+  scripts.forEach(old=>{
+    const s=document.createElement('script');
+    [...old.attributes].forEach(a=>s.setAttribute(a.name,a.value));
+    s.textContent=old.textContent;
+    container.appendChild(s);
+  });
+  return true;
 }
 
 /* CONTACT FORM — submits via fetch to Formspree so we can stay on-page
@@ -191,9 +231,11 @@ contactForm.addEventListener('submit', async (e) => {
   }
 });
 
-/* SCROLL SPY — only Home/About/Contact live on this page; Galleries is a separate page */
+/* SCROLL SPY — only Home/About/(optional Instagram)/Contact live on this
+   page; Galleries is a separate page */
 const rp=document.getElementById('right-panel');
-const secIds=['home','about','contact'];
+const hasInstagram=renderInstagram();
+const secIds=['home','about',...(hasInstagram?['instagram']:[]),'contact'];
 rp.addEventListener('scroll',()=>{
   const sy=rp.scrollTop; let active='home';
   secIds.forEach(id=>{const el=document.getElementById('section-'+id);if(el&&el.offsetTop-100<=sy)active=id;});

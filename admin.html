@@ -185,6 +185,14 @@ img { display: block; max-width: 100%; }
 .form-field textarea { min-height: 80px; }
 .form-field .hint { font-size: 11px; color: #bbb; margin-top: 6px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.color-field { display: flex; gap: 8px; align-items: center; }
+.color-field input[type="color"] { width: 40px; height: 38px; border: 1px solid #ddd; padding: 2px; cursor: pointer; flex-shrink: 0; }
+.color-field input[type="text"] {
+  flex: 1; border: 1px solid #ddd; background: #fafafa;
+  font-family: 'Raleway', sans-serif; font-size: 13px; color: #333;
+  padding: 9px 12px; outline: none; text-transform: uppercase;
+}
+.color-field input[type="text"]:focus { border-color: #999; background: #fff; }
 
 /* modal */
 .modal-bg {
@@ -408,6 +416,7 @@ img { display: block; max-width: 100%; }
   <div class="adm-tabs">
     <button class="adm-tab active" onclick="switchTab('albums',this)">Albums</button>
     <button class="adm-tab" onclick="switchTab('hero',this)">Hero</button>
+    <button class="adm-tab" onclick="switchTab('theme',this)">Theme</button>
     <button class="adm-tab" onclick="switchTab('about',this)">About</button>
     <button class="adm-tab" onclick="switchTab('settings',this)">Settings</button>
   </div>
@@ -439,6 +448,50 @@ img { display: block; max-width: 100%; }
         &#128193; Drop images here or click to add hero slides
       </div>
       <div class="upload-queue" id="hero-upload-queue"></div>
+    </div>
+
+    <!-- THEME -->
+    <div class="adm-section" id="tab-theme">
+      <div class="sec-head">
+        <h3>Theme</h3>
+        <button class="btn btn-black" onclick="saveTheme()">Save Changes</button>
+      </div>
+
+      <div class="settings-group">
+        <h4>Colors</h4>
+        <div class="form-row">
+          <div class="form-field">
+            <label>Primary (buttons, nav highlight, hero progress)</label>
+            <div class="color-field"><input type="color" id="th-primary"><input type="text" id="th-primary-hex" placeholder="#D4501A"></div>
+          </div>
+          <div class="form-field">
+            <label>Accent (section labels, category tags)</label>
+            <div class="color-field"><input type="color" id="th-accent"><input type="text" id="th-accent-hex" placeholder="#2A7D6F"></div>
+          </div>
+        </div>
+        <div class="form-field" style="max-width:260px">
+          <label>Dark (sidebar, headings)</label>
+          <div class="color-field"><input type="color" id="th-dark"><input type="text" id="th-dark-hex" placeholder="#1a1a1a"></div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <h4>Typography</h4>
+        <div class="form-field" style="max-width:320px">
+          <label>Site Font</label>
+          <select id="th-font"></select>
+          <div class="hint">Josefin Sans is bundled offline; everything else loads from Google Fonts the first time it's selected.</div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <h4>Instagram Feed</h4>
+        <div class="form-field">
+          <label>Embed Code</label>
+          <textarea id="th-ig" style="min-height:100px;font-family:monospace;font-size:11px" placeholder="Paste your SnapWidget (or similar) embed snippet here"></textarea>
+          <div class="hint">Get this from snapwidget.com (free) after connecting your Instagram account. Leave blank to hide the Instagram section on the homepage entirely.</div>
+        </div>
+      </div>
     </div>
 
     <!-- ABOUT -->
@@ -594,11 +647,24 @@ const DEFAULT_DATA = {
     { id:'h4', url:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&q=85', label:'Nature', title:'Into the Wild', albumId:'a4' },
     { id:'h5', url:'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1600&q=85', label:'Serenity', title:'Open Horizons', albumId:null }
   ],
-  about: { heading:'About Us', photo:'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&q=80', body:'Photography is a way of feeling, of touching, of loving. What you have caught on film is captured forever.\n\nI am based in Bengaluru, chasing light and stories across India and beyond. Every frame here is a short. Every album, a story worth telling.' }
+  about: { heading:'About Us', photo:'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&q=80', body:'Photography is a way of feeling, of touching, of loving. What you have caught on film is captured forever.\n\nI am based in Bengaluru, chasing light and stories across India and beyond. Every frame here is a short. Every album, a story worth telling.' },
+  theme: { primary:'#D4501A', accent:'#2A7D6F', dark:'#1a1a1a', fontKey:'josefin', instagramEmbedCode:'' }
+};
+
+/* Same curated catalog as assets/site.js — admin picks by key, not free
+   text, so the dropdown always matches what the live site knows how to load. */
+const FONT_OPTIONS = {
+  josefin:    { label:"Josefin Sans (default)", family:"'Josefin Sans', sans-serif", url:null },
+  playfair:   { label:'Playfair Display',       family:"'Playfair Display', serif", url:'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap' },
+  cormorant:  { label:'Cormorant Garamond',      family:"'Cormorant Garamond', serif", url:'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&display=swap' },
+  raleway:    { label:'Raleway',                 family:"'Raleway', sans-serif", url:'https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600;700&display=swap' },
+  montserrat: { label:'Montserrat',              family:"'Montserrat', sans-serif", url:'https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap' },
+  ebgaramond: { label:'EB Garamond',             family:"'EB Garamond', serif", url:'https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&display=swap' },
+  dmserif:    { label:'DM Serif Display',        family:"'DM Serif Display', serif", url:'https://fonts.googleapis.com/css2?family=DM+Serif+Display:wght@400&display=swap' }
 };
 
 function getPw() { return localStorage.getItem(PW_KEY) || DEFAULT_PW; }
-function getData() { try { const r=localStorage.getItem(DB_KEY); const d=r?JSON.parse(r):DEFAULT_DATA; if(!d.hero) d.hero=DEFAULT_DATA.hero; return d; } catch(e){return DEFAULT_DATA;} }
+function getData() { try { const r=localStorage.getItem(DB_KEY); const d=r?JSON.parse(r):DEFAULT_DATA; if(!d.hero) d.hero=DEFAULT_DATA.hero; if(!d.theme) d.theme=DEFAULT_DATA.theme; return d; } catch(e){return DEFAULT_DATA;} }
 function saveData(d) { localStorage.setItem(DB_KEY,JSON.stringify(d)); }
 
 /* AUTH */
@@ -637,6 +703,7 @@ function switchTab(name,btn) {
   btn.classList.add('active');
   if(name==='about') loadAboutForm();
   if(name==='hero') loadHeroTab();
+  if(name==='theme') loadThemeTab();
 }
 
 function loadAdmin() { renderAlbGrid(); loadAboutForm(); }
@@ -982,6 +1049,50 @@ function saveHero(){
   toast('Hero slides saved!');
 }
 
+/* THEME */
+function loadThemeTab(){
+  const theme=getData().theme||DEFAULT_DATA.theme;
+
+  document.getElementById('th-primary').value=theme.primary;
+  document.getElementById('th-primary-hex').value=theme.primary.toUpperCase();
+  document.getElementById('th-accent').value=theme.accent;
+  document.getElementById('th-accent-hex').value=theme.accent.toUpperCase();
+  document.getElementById('th-dark').value=theme.dark;
+  document.getElementById('th-dark-hex').value=theme.dark.toUpperCase();
+  document.getElementById('th-ig').value=theme.instagramEmbedCode||'';
+
+  const sel=document.getElementById('th-font');
+  sel.innerHTML=Object.keys(FONT_OPTIONS).map(k=>`<option value="${k}"${k===theme.fontKey?' selected':''}>${FONT_OPTIONS[k].label}</option>`).join('');
+
+  // keep the swatch + hex text field in sync with each other, both ways
+  linkColorInputs('th-primary','th-primary-hex');
+  linkColorInputs('th-accent','th-accent-hex');
+  linkColorInputs('th-dark','th-dark-hex');
+}
+
+function linkColorInputs(colorId,hexId){
+  const colorEl=document.getElementById(colorId), hexEl=document.getElementById(hexId);
+  colorEl.oninput=()=>{ hexEl.value=colorEl.value.toUpperCase(); };
+  hexEl.oninput=()=>{ if(/^#[0-9A-Fa-f]{6}$/.test(hexEl.value)) colorEl.value=hexEl.value; };
+}
+
+function saveTheme(){
+  const isHex=v=>/^#[0-9A-Fa-f]{6}$/.test(v);
+  const primary=document.getElementById('th-primary-hex').value.trim();
+  const accent=document.getElementById('th-accent-hex').value.trim();
+  const dark=document.getElementById('th-dark-hex').value.trim();
+  if(!isHex(primary)||!isHex(accent)||!isHex(dark)) return toast('Colors must be a valid hex code like #D4501A',true);
+
+  const data=getData();
+  data.theme={
+    primary, accent, dark,
+    fontKey: document.getElementById('th-font').value,
+    instagramEmbedCode: document.getElementById('th-ig').value.trim()
+  };
+  saveData(data);
+  toast('Theme saved!');
+}
+
 /* ABOUT */
 function loadAboutForm() {
   const a=getData().about||{};
@@ -1003,7 +1114,7 @@ function saveAbout() {
 /* EXPORT / IMPORT / RESET */
 function exportData(){const b=new Blob([JSON.stringify(getData(),null,2)],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='sns-backup.json';a.click();URL.revokeObjectURL(u);toast('Backup downloaded');}
 function importData(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const p=JSON.parse(e.target.result);if(!p.albums)throw new Error();confirmAction('Import this backup? Current data will be overwritten.',()=>{saveData(p);renderAlbGrid();loadAboutForm();toast('Data imported!');});}catch{toast('Invalid backup file',true);}};r.readAsText(f);inp.value='';}
-function doReset(){localStorage.removeItem(DB_KEY);renderAlbGrid();loadAboutForm();loadHeroTab();toast('Reset to defaults');}
+function doReset(){localStorage.removeItem(DB_KEY);renderAlbGrid();loadAboutForm();loadHeroTab();loadThemeTab();toast('Reset to defaults');}
 
 /* CONFIRM */
 function confirmAction(msg,cb){

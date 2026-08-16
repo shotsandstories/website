@@ -19,9 +19,44 @@ const DEFAULT_DATA = {
     { id:'h4', url:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&q=85', label:'Nature', title:'Into the Wild', albumId:'a4' },
     { id:'h5', url:'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1600&q=85', label:'Serenity', title:'Open Horizons', albumId:null }
   ],
-  about: { heading:'About Us', photo:'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&q=80', body:"Photography is a way of feeling, of touching, of loving. What you have caught on film is captured forever — it remembers little things, long after you have forgotten everything.\n\nI am based in Hyderabad, chasing light and stories across India and beyond. Every frame here is a short. Every album, a story worth telling.\n\nAvailable for portrait sessions, travel assignments, and creative collaborations." }
+  about: { heading:'About Us', photo:'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&q=80', body:"Photography is a way of feeling, of touching, of loving. What you have caught on film is captured forever — it remembers little things, long after you have forgotten everything.\n\nI am based in Hyderabad, chasing light and stories across India and beyond. Every frame here is a short. Every album, a story worth telling.\n\nAvailable for portrait sessions, travel assignments, and creative collaborations." },
+  theme: { primary:'#D4501A', accent:'#2A7D6F', dark:'#1a1a1a', fontKey:'josefin', instagramEmbedCode:'' }
 };
-function getData(){ try{const r=localStorage.getItem(DB_KEY);const d=r?JSON.parse(r):DEFAULT_DATA;if(!d.hero)d.hero=DEFAULT_DATA.hero;return d;}catch(e){return DEFAULT_DATA;} }
+function getData(){ try{const r=localStorage.getItem(DB_KEY);const d=r?JSON.parse(r):DEFAULT_DATA;if(!d.hero)d.hero=DEFAULT_DATA.hero;if(!d.theme)d.theme=DEFAULT_DATA.theme;return d;}catch(e){return DEFAULT_DATA;} }
+
+/* Curated font catalog — admin picks by key, not free text, so a typo can't
+   silently break every heading on the site. 'josefin' is the only one that
+   loads for free (embedded as base64 in assets/fonts.css already); every
+   other choice pulls from Google Fonts CDN at runtime, once, the first time
+   it's actually selected. */
+const FONT_OPTIONS = {
+  josefin:    { label:"Josefin Sans (default)", family:"'Josefin Sans', sans-serif", url:null },
+  playfair:   { label:'Playfair Display',       family:"'Playfair Display', serif", url:'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap' },
+  cormorant:  { label:'Cormorant Garamond',      family:"'Cormorant Garamond', serif", url:'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&display=swap' },
+  raleway:    { label:'Raleway',                 family:"'Raleway', sans-serif", url:'https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600;700&display=swap' },
+  montserrat: { label:'Montserrat',              family:"'Montserrat', sans-serif", url:'https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap' },
+  ebgaramond: { label:'EB Garamond',             family:"'EB Garamond', serif", url:'https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&display=swap' },
+  dmserif:    { label:'DM Serif Display',        family:"'DM Serif Display', serif", url:'https://fonts.googleapis.com/css2?family=DM+Serif+Display:wght@400&display=swap' }
+};
+
+/* Applies the saved theme (colors + font) by overriding the CSS custom
+   properties already used throughout site.css (--orange/--teal/--dark/
+   --font-main), instead of hardcoding colors/fonts per-rule. Runs
+   automatically on every page load. */
+function applyTheme(){
+  const theme=(getData().theme)||DEFAULT_DATA.theme;
+  const root=document.documentElement.style;
+  if(theme.primary) root.setProperty('--orange',theme.primary);
+  if(theme.accent) root.setProperty('--teal',theme.accent);
+  if(theme.dark) root.setProperty('--dark',theme.dark);
+  const font=FONT_OPTIONS[theme.fontKey]||FONT_OPTIONS.josefin;
+  if(font.url && !document.querySelector(`link[data-theme-font="${theme.fontKey}"]`)){
+    const link=document.createElement('link');
+    link.rel='stylesheet'; link.href=font.url; link.dataset.themeFont=theme.fontKey;
+    document.head.appendChild(link);
+  }
+  root.setProperty('--font-main',font.family);
+}
 
 /* Videos and photos share the same album.images string array — a URL is
    recognized as video purely by Cloudinary's own URL convention
@@ -100,5 +135,6 @@ document.getElementById('lightbox').addEventListener('click',function(e){if(e.ta
 /* TOAST */
 function showToast(msg,err=false){const t=document.getElementById('toast');t.textContent=msg;t.classList.toggle('error',err);t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 
-/* every page needs this on load */
+/* every page needs these on load */
 initPanelState();
+applyTheme();
