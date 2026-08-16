@@ -12,9 +12,16 @@ const DEFAULT_DATA = {
     { id:'a3', title:'Still Water', description:"Reflections, stillness, and the meditative calm of nature's quieter moments by the lake.", tags:['Nature','Landscape'], cover:'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=1400&q=80', images:['https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=1400&q=80','https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80','https://images.unsplash.com/photo-1501854140801-50d01698950b?w=900&q=80','https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=900&q=80'] },
     { id:'a4', title:'Into the Wild', description:'Mountains, mist, and the raw silence of places untouched by time.', tags:['Nature','Mountain'], cover:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1400&q=80', images:['https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1400&q=80','https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=900&q=80','https://images.unsplash.com/photo-1519681393784-d120267933ba?w=900&q=80','https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=900&q=80'] }
   ],
+  hero: [
+    { id:'h1', url:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1600&q=85', label:'Portrait', title:'Golden Light', albumId:'a1' },
+    { id:'h2', url:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=85', label:'Urban', title:'City Whispers', albumId:'a2' },
+    { id:'h3', url:'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=1600&q=85', label:'Landscape', title:'Still Water', albumId:'a3' },
+    { id:'h4', url:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&q=85', label:'Nature', title:'Into the Wild', albumId:'a4' },
+    { id:'h5', url:'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1600&q=85', label:'Serenity', title:'Open Horizons', albumId:null }
+  ],
   about: { heading:'About Us', photo:'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&q=80', body:"Photography is a way of feeling, of touching, of loving. What you have caught on film is captured forever — it remembers little things, long after you have forgotten everything.\n\nI am based in Hyderabad, chasing light and stories across India and beyond. Every frame here is a short. Every album, a story worth telling.\n\nAvailable for portrait sessions, travel assignments, and creative collaborations." }
 };
-function getData(){ try{const r=localStorage.getItem(DB_KEY);return r?JSON.parse(r):DEFAULT_DATA;}catch(e){return DEFAULT_DATA;} }
+function getData(){ try{const r=localStorage.getItem(DB_KEY);const d=r?JSON.parse(r):DEFAULT_DATA;if(!d.hero)d.hero=DEFAULT_DATA.hero;return d;}catch(e){return DEFAULT_DATA;} }
 
 /* PANEL TOGGLE */
 let panelOpen=false;

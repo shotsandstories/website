@@ -107,34 +107,35 @@
 
 <script src="assets/site.js"></script>
 <script>
-/* HERO */
-const HERO_IMAGES = [
-  {url:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1600&q=85',label:'Portrait',title:'Golden Light'},
-  {url:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=85',label:'Urban',title:'City Whispers'},
-  {url:'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=1600&q=85',label:'Landscape',title:'Still Water'},
-  {url:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&q=85',label:'Nature',title:'Into the Wild'},
-  {url:'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1600&q=85',label:'Serenity',title:'Open Horizons'}
-];
+/* HERO — slides come from data.hero (managed in admin.html's Hero tab),
+   not hardcoded here. Each slide independently stores its own image/label/
+   title and optionally links to an album by id. */
 let currentSlide=0, slideTimer=null;
 const SLIDE_DURATION=5000;
 
 function buildHero(){
   const data=getData();
-  const slides=HERO_IMAGES.map((h,i)=>{
-    const a=data.albums[i];
-    return {url:a?a.cover:h.url,label:a?(a.tags[0]||h.label):h.label,title:a?a.title:h.title,cats:a?a.tags:[h.label],id:a?a.id:null};
-  });
-  document.getElementById('hero-slides').innerHTML=slides.map((s,i)=>`
+  const slides=data.hero||[];
+  const wrap=document.getElementById('hero-slides');
+  if(!slides.length){
+    wrap.innerHTML='';
+    document.getElementById('hero-dots').innerHTML='';
+    return;
+  }
+  wrap.innerHTML=slides.map((s,i)=>{
+    const album=s.albumId?data.albums.find(a=>a.id===s.albumId):null;
+    return `
     <div class="hero-slide${i===0?' active':''}" id="slide-${i}">
       <div class="slide-img" style="background-image:url('${s.url}')"></div>
       <div class="slide-gradient"></div>
       <div class="hero-text">
-        <div class="hero-slide-label">${String(i+1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')} &nbsp;&mdash;&nbsp; ${s.label}</div>
-        <div class="hero-slide-title">${s.title}</div>
-        <div class="hero-slide-cats">${s.cats.map((c,j)=>j===0?c:`<span class="sep">/</span>${c}`).join('')}</div>
-        ${s.id?`<button class="hero-view-btn" onclick="openDrawer('${s.id}')">View Album</button>`:`<a class="hero-view-btn" href="galleries">View Album</a>`}
+        <div class="hero-slide-label">${String(i+1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')}${s.label?` &nbsp;&mdash;&nbsp; ${s.label}`:''}</div>
+        <div class="hero-slide-title">${s.title||''}</div>
+        ${album?`<div class="hero-slide-cats">${album.tags.map((c,j)=>j===0?c:`<span class="sep">/</span>${c}`).join('')}</div>`:''}
+        ${album?`<button class="hero-view-btn" onclick="openDrawer('${album.id}')">View Album</button>`:`<a class="hero-view-btn" href="galleries">View Album</a>`}
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
   document.getElementById('hero-dots').innerHTML=slides.map((_,i)=>`<div class="dot${i===0?' active':''}" onclick="heroGo(${i})"></div>`).join('');
   startSlideTimer();
 }
