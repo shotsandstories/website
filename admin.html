@@ -662,12 +662,42 @@ function dzDrop(e){e.preventDefault();dzLeave();processFiles(Array.from(e.dataTr
 function filesIn(inp){processFiles(Array.from(inp.files));inp.value='';}
 
 /* CLOUDINARY UPLOAD */
+const MAX_DIM = 2400;       // longest side in px — plenty for a full-screen lightbox, cuts most camera exports well under Cloudinary's per-file cap
+const JPEG_QUALITY = 0.86;  // re-encode quality/size balance for photography
+
 function processFiles(files){
   files.forEach(f=>{
     if(!f.type.startsWith('image/')){ toast(f.name+' is not an image',true); return; }
     const itemId='up'+Date.now()+Math.random().toString(36).slice(2,7);
     addQueueItem(itemId,f.name);
-    uploadToCloudinary(f,itemId);
+    resizeImage(f,itemId)
+      .then(blob=>uploadToCloudinary(blob,itemId,f.name))
+      .catch(()=>uploadToCloudinary(f,itemId,f.name)); // resize failed (odd format, etc.) — fall back to the original file
+  });
+}
+
+/* Downscales + re-encodes to JPEG client-side before upload. Runs on every
+   file, not just oversized ones, so gallery photos stay a consistent size —
+   this is also what fixes Cloudinary's unsigned-upload size cap (10MB) for
+   full-res camera exports. */
+function resizeImage(file,itemId){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    const url=URL.createObjectURL(file);
+    img.onload=()=>{
+      URL.revokeObjectURL(url);
+      let {width,height}=img;
+      if(width>MAX_DIM||height>MAX_DIM){
+        if(width>=height){ height=Math.round(height*(MAX_DIM/width)); width=MAX_DIM; }
+        else { width=Math.round(width*(MAX_DIM/height)); height=MAX_DIM; }
+      }
+      const canvas=document.createElement('canvas');
+      canvas.width=width; canvas.height=height;
+      canvas.getContext('2d').drawImage(img,0,0,width,height);
+      canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('toBlob failed')),'image/jpeg',JPEG_QUALITY);
+    };
+    img.onerror=()=>{ URL.revokeObjectURL(url); reject(new Error('image load failed')); };
+    img.src=url;
   });
 }
 
@@ -679,7 +709,7 @@ function addQueueItem(id,name){
   el.innerHTML=`
     <div class="upload-item-name">${name}</div>
     <div class="upload-bar-track"><div class="upload-bar-fill" id="bar_${id}"></div></div>
-    <div class="upload-status" id="status_${id}">Uploading&hellip;</div>`;
+    <div class="upload-status" id="status_${id}">Resizing&hellip;</div>`;
   q.appendChild(el);
 }
 
@@ -697,11 +727,14 @@ function uploadFailed(id,msg){
   setTimeout(()=>removeQueueItem(id),3500);
 }
 
-function uploadToCloudinary(file,itemId){
+function uploadToCloudinary(file,itemId,filename){
   const formData=new FormData();
-  formData.append('file',file);
+  formData.append('file',file,filename||file.name||'photo.jpg');
   formData.append('upload_preset',CL_PRESET);
   formData.append('folder',CL_FOLDER);
+
+  const status0=document.getElementById('status_'+itemId);
+  if(status0) status0.textContent='Uploading…';
 
   const xhr=new XMLHttpRequest();
   xhr.open('POST',`https://api.cloudinary.com/v1_1/${CL_CLOUD}/image/upload`);
