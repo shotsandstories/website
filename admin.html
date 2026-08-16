@@ -408,6 +408,7 @@ img { display: block; max-width: 100%; }
       Shorts &amp; Stories
     </div>
     <div class="adm-header-btns">
+      <button class="btn btn-green" id="publish-btn" onclick="publishToGitHub()">Publish to Live Site</button>
       <a href="./" target="_blank"><button class="btn btn-dark">View Site &#8599;</button></a>
       <button class="btn btn-dark" onclick="doLogout()">Logout</button>
     </div>
@@ -522,6 +523,21 @@ img { display: block; max-width: 100%; }
     <div class="adm-section" id="tab-settings">
       <div class="sec-head"><h3>Settings</h3></div>
       <div class="settings-group">
+        <h4>Publish to Live Site</h4>
+        <div class="hint" style="margin-bottom:12px">
+          Everything you edit here saves to this browser only, until you click <strong>Publish to Live Site</strong> (top right). That pushes your current content to <code>data.json</code> in the GitHub repo &mdash; that's what every real visitor actually sees. Requires a GitHub token scoped to just this one repo: on github.com go to Settings &rarr; Developer settings &rarr; Personal access tokens &rarr; Fine-grained tokens &rarr; Generate new token, set Resource owner to the <code>shotsandstories</code> account, Repository access to only the <code>website</code> repo, and Permissions &rarr; Contents to <strong>Read and write</strong>.
+        </div>
+        <div class="form-field">
+          <label>GitHub Token</label>
+          <input type="password" id="gh-token" placeholder="github_pat_...">
+        </div>
+        <button class="btn btn-white" onclick="saveGhToken()">Save Token</button>
+        <div class="hint" id="gh-status" style="margin-top:14px"></div>
+        <div style="margin-top:20px">
+          <button class="btn btn-white" onclick="confirmAction('Pull the live published content into this browser? Any unsaved local changes will be overwritten.',doPullLatest)">Pull Latest from Live Site</button>
+        </div>
+      </div>
+      <div class="settings-group">
         <h4>Change Password</h4>
         <div class="form-field"><label>Current Password</label><input type="password" id="cur-pw"></div>
         <div class="form-row">
@@ -633,6 +649,17 @@ const DEFAULT_PW = 'admin123';
 const CL_CLOUD = 'djj9u3ciy';
 const CL_PRESET = 'ShortsAndStories';
 const CL_FOLDER = 'shots-and-stories';
+
+/* GITHUB PUBLISH — the site's public pages fetch data.json from the repo
+   root (see initData() in assets/site.js); this is the only thing that
+   writes that file. Token lives in its own localStorage key, separate from
+   sns_data, so JSON export/import/reset never touch it. */
+const GH_OWNER = 'shotsandstories';
+const GH_REPO = 'website';
+const GH_BRANCH = 'main';
+const GH_FILE_PATH = 'data.json';
+const GH_TOKEN_KEY = 'sns_gh_token';
+const GH_PUBLISHED_KEY = 'sns_gh_published_at';
 const DEFAULT_DATA = {
   albums: [
     { id:'a1', title:'Golden Light', description:'Photography is a way of feeling, of touching, of loving. What you have caught on film is captured forever.', tags:['Portrait','Golden Hour'], cover:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1400&q=80', images:['https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1400&q=80','https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=900&q=80','https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=900&q=80','https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=900&q=80'] },
@@ -666,6 +693,89 @@ const FONT_OPTIONS = {
 function getPw() { return localStorage.getItem(PW_KEY) || DEFAULT_PW; }
 function getData() { try { const r=localStorage.getItem(DB_KEY); const d=r?JSON.parse(r):DEFAULT_DATA; if(!d.hero) d.hero=DEFAULT_DATA.hero; if(!d.theme) d.theme=DEFAULT_DATA.theme; return d; } catch(e){return DEFAULT_DATA;} }
 function saveData(d) { localStorage.setItem(DB_KEY,JSON.stringify(d)); }
+
+/* GITHUB PUBLISH */
+function getGhToken(){ return localStorage.getItem(GH_TOKEN_KEY)||''; }
+function saveGhToken(){
+  localStorage.setItem(GH_TOKEN_KEY, document.getElementById('gh-token').value.trim());
+  toast(getGhToken()?'GitHub token saved':'GitHub token cleared');
+  updatePublishStatus();
+}
+function updatePublishStatus(){
+  const el=document.getElementById('gh-status');
+  if(!el) return;
+  const last=localStorage.getItem(GH_PUBLISHED_KEY);
+  el.textContent = !getGhToken()
+    ? 'No GitHub token saved yet — Publish will ask for one.'
+    : last ? `Last published ${new Date(last).toLocaleString()}` : 'Not published yet.';
+}
+
+/* Fetches the currently-live data.json. force=false only writes it into
+   localStorage if there's no local draft yet (fresh browser) — won't
+   silently clobber in-progress edits. force=true (Pull Latest button)
+   always overwrites, after the caller has already confirmed with the
+   user. Returns true if it actually loaded+applied remote data. */
+async function pullRemoteData(force){
+  try{
+    const res=await fetch('data.json?t='+Date.now(),{cache:'no-store'});
+    if(!res.ok) return false; // nothing published yet
+    const remote=await res.json();
+    if(!remote||!Array.isArray(remote.albums)) return false;
+    if(!force && localStorage.getItem(DB_KEY)) return false;
+    saveData(remote);
+    return true;
+  }catch(e){ return false; }
+}
+async function doPullLatest(){
+  const ok=await pullRemoteData(true);
+  if(ok){ renderAlbGrid(); loadAboutForm(); loadHeroTab(); loadThemeTab(); toast('Pulled latest published content'); }
+  else toast('Nothing published yet, or the fetch failed',true);
+}
+
+/* Pushes the current localStorage snapshot to data.json in the repo via
+   GitHub's Contents API: GET first to find the file's current sha (needed
+   to update an existing file — omitted entirely when creating it for the
+   first time), then PUT the new content. btoa(unescape(encodeURIComponent(
+   ...))) is the standard browser trick for UTF-8-safe base64, since btoa
+   alone only handles Latin-1 and bios/captions may contain non-ASCII text. */
+async function publishToGitHub(){
+  const token=getGhToken();
+  if(!token){
+    switchToSettingsAndFocusToken();
+    return toast('Add a GitHub token in Settings first',true);
+  }
+  const btn=document.getElementById('publish-btn');
+  const apiUrl=`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE_PATH}`;
+  const headers={ 'Authorization':`Bearer ${token}`, 'Accept':'application/vnd.github+json' };
+  const origLabel=btn.textContent;
+  btn.disabled=true; btn.textContent='Publishing…';
+  try{
+    let sha;
+    const getRes=await fetch(`${apiUrl}?ref=${GH_BRANCH}`,{headers});
+    if(getRes.status===200){ sha=(await getRes.json()).sha; }
+    else if(getRes.status!==404){ throw new Error(`Couldn't check the live file (HTTP ${getRes.status})`); }
+
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(getData(),null,2))));
+    const body={ message:'Publish site content via admin panel', content, branch:GH_BRANCH };
+    if(sha) body.sha=sha;
+    const putRes=await fetch(apiUrl,{ method:'PUT', headers:{...headers,'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    if(!putRes.ok){
+      const err=await putRes.json().catch(()=>({}));
+      throw new Error(err.message||`Publish failed (HTTP ${putRes.status})`);
+    }
+    localStorage.setItem(GH_PUBLISHED_KEY,new Date().toISOString());
+    updatePublishStatus();
+    toast('Published! Live in ~1 minute once GitHub Pages redeploys.');
+  }catch(e){
+    toast(e.message||'Publish failed',true);
+  }finally{
+    btn.disabled=false; btn.textContent=origLabel;
+  }
+}
+function switchToSettingsAndFocusToken(){
+  switchTab('settings',document.querySelector('.adm-tab:nth-child(5)'));
+  setTimeout(()=>document.getElementById('gh-token').focus(),50);
+}
 
 /* AUTH */
 function doLogin() {
@@ -704,9 +814,24 @@ function switchTab(name,btn) {
   if(name==='about') loadAboutForm();
   if(name==='hero') loadHeroTab();
   if(name==='theme') loadThemeTab();
+  if(name==='settings') loadSettingsTab();
 }
 
-function loadAdmin() { renderAlbGrid(); loadAboutForm(); }
+function loadSettingsTab(){
+  document.getElementById('gh-token').value=getGhToken();
+  updatePublishStatus();
+}
+
+/* On a fresh browser with no local draft yet, seed from whatever's actually
+   live (pullRemoteData(false) — won't touch an existing local draft) before
+   rendering, so a first login on a new device doesn't start from stale
+   DEFAULT_DATA and risk overwriting real published content on Publish. */
+async function loadAdmin() {
+  await pullRemoteData(false);
+  renderAlbGrid();
+  loadAboutForm();
+  updatePublishStatus();
+}
 
 /* ALBUMS GRID */
 function renderAlbGrid() {

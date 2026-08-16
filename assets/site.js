@@ -24,6 +24,29 @@ const DEFAULT_DATA = {
 };
 function getData(){ try{const r=localStorage.getItem(DB_KEY);const d=r?JSON.parse(r):DEFAULT_DATA;if(!d.hero)d.hero=DEFAULT_DATA.hero;if(!d.theme)d.theme=DEFAULT_DATA.theme;return d;}catch(e){return DEFAULT_DATA;} }
 
+/* REMOTE DATA — data.json is committed to the repo root by admin.html's
+   "Publish to Live Site" button (GitHub Contents API). It's the actually-
+   published content; localStorage is just this browser's cache of it (or,
+   before the first-ever Publish, DEFAULT_DATA sample content). Every page
+   fetches data.json once on load and, if present, overwrites the local
+   cache with it so real visitors see real content instead of getting stuck
+   on the bundled sample photos. Fails silently (returns false) on a 404
+   (nothing published yet), offline, or malformed JSON — callers just skip
+   the re-render and whatever was already shown from getData()'s existing
+   fallback chain stays up. */
+async function initData(){
+  try{
+    const res=await fetch('data.json',{cache:'no-store'});
+    if(!res.ok) return false;
+    const remote=await res.json();
+    if(!remote||!Array.isArray(remote.albums)) return false;
+    localStorage.setItem(DB_KEY,JSON.stringify(remote));
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
 /* Curated font catalog — admin picks by key, not free text, so a typo can't
    silently break every heading on the site. 'josefin' is the only one that
    loads for free (embedded as base64 in assets/fonts.css already); every

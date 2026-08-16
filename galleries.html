@@ -109,6 +109,16 @@ function renderGalleries(){
 }
 
 renderGalleries();
+
+/* Render immediately from cached data (localStorage/DEFAULT_DATA) for a
+   fast first paint, then re-render once data.json (the actually-published
+   content) has loaded — see initData() in assets/site.js. */
+(async()=>{
+  if(await initData()){
+    applyTheme();
+    renderGalleries();
+  }
+})();
 </script>
 </body>
 </html>

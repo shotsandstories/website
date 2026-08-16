@@ -122,6 +122,7 @@ let currentSlide=0, slideTimer=null;
 const SLIDE_DURATION=5000;
 
 function buildHero(){
+  currentSlide=0; // safe to call buildHero() again after a late data.json fetch resolves
   const data=getData();
   const slides=data.hero||[];
   const wrap=document.getElementById('hero-slides');
@@ -232,10 +233,18 @@ contactForm.addEventListener('submit', async (e) => {
 });
 
 /* SCROLL SPY — only Home/About/(optional Instagram)/Contact live on this
-   page; Galleries is a separate page */
+   page; Galleries is a separate page. secIds is `let`, not `const`, and
+   rebuilt by updateSecIds() so it can change after data.json loads (e.g.
+   Instagram wasn't configured in the cached copy but is in the published
+   one) — the scroll listener below reads the outer variable fresh on every
+   scroll event, so reassigning it later is safe. */
 const rp=document.getElementById('right-panel');
-const hasInstagram=renderInstagram();
-const secIds=['home','about',...(hasInstagram?['instagram']:[]),'contact'];
+let secIds=['home','about','contact'];
+function updateSecIds(){
+  const hasInstagram=renderInstagram();
+  secIds=['home','about',...(hasInstagram?['instagram']:[]),'contact'];
+}
+updateSecIds();
 rp.addEventListener('scroll',()=>{
   const sy=rp.scrollTop; let active='home';
   secIds.forEach(id=>{const el=document.getElementById('section-'+id);if(el&&el.offsetTop-100<=sy)active=id;});
@@ -250,9 +259,22 @@ document.querySelectorAll('.nav-link[data-sec]').forEach(a=>{
   });
 });
 
-/* INIT */
+/* INIT — render immediately from cached data (localStorage/DEFAULT_DATA)
+   for a fast first paint, then re-render once data.json (the actually-
+   published content) has loaded, so first-time visitors aren't stuck
+   seeing the bundled sample content. initData()/applyTheme() live in
+   assets/site.js. */
 buildHero();
 renderAbout();
+
+(async()=>{
+  if(await initData()){
+    applyTheme();
+    buildHero();
+    renderAbout();
+    updateSecIds();
+  }
+})();
 
 /* deep-link support: e.g. arriving from galleries page's ./#section-about link */
 if (location.hash) {
