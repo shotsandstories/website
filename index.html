@@ -35,14 +35,14 @@
   <nav>
     <ul>
       <li><a href="#" class="nav-link active" data-sec="home">Home</a></li>
-      <li><a href="galleries.html" class="nav-link">Galleries</a></li>
+      <li><a href="galleries" class="nav-link">Galleries</a></li>
       <li><a href="#" class="nav-link" data-sec="about">About</a></li>
       <li><a href="#" class="nav-link" data-sec="contact">Contact</a></li>
     </ul>
   </nav>
   <div class="panel-footer">
     &copy; 2025 Shots &amp; Stories<br>
-    <a href="admin.html" target="_blank">Admin Panel</a>
+    <a href="admin" target="_blank">Admin Panel</a>
   </div>
 </div>
 
@@ -132,7 +132,7 @@ function buildHero(){
         <div class="hero-slide-label">${String(i+1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')} &nbsp;&mdash;&nbsp; ${s.label}</div>
         <div class="hero-slide-title">${s.title}</div>
         <div class="hero-slide-cats">${s.cats.map((c,j)=>j===0?c:`<span class="sep">/</span>${c}`).join('')}</div>
-        ${s.id?`<button class="hero-view-btn" onclick="openDrawer('${s.id}')">View Album</button>`:`<a class="hero-view-btn" href="galleries.html">View Album</a>`}
+        ${s.id?`<button class="hero-view-btn" onclick="openDrawer('${s.id}')">View Album</button>`:`<a class="hero-view-btn" href="galleries">View Album</a>`}
       </div>
     </div>`).join('');
   document.getElementById('hero-dots').innerHTML=slides.map((_,i)=>`<div class="dot${i===0?' active':''}" onclick="heroGo(${i})"></div>`).join('');
@@ -210,7 +210,7 @@ document.querySelectorAll('.nav-link[data-sec]').forEach(a=>{
 buildHero();
 renderAbout();
 
-/* deep-link support: e.g. arriving from galleries.html#section-about */
+/* deep-link support: e.g. arriving from galleries page's ./#section-about link */
 if (location.hash) {
   const target = document.querySelector(location.hash);
   if (target) requestAnimationFrame(() => rp.scrollTo({ top: target.offsetTop, behavior: 'auto' }));
