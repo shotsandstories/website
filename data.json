@@ -1,58 +1,65 @@
 {
   "albums": [
     {
-      "id": "a1786933922382",
-      "title": "New Album",
+      "id": "a1",
+      "title": "Album",
       "tags": [],
       "description": "",
-      "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933528/shots-and-stories/bu8zao3bvcehnyb91p4r.jpg",
+      "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938108/shots-and-stories/brs69yotw2jjzuwzmdoq.jpg",
       "images": [
-        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933528/shots-and-stories/bu8zao3bvcehnyb91p4r.jpg",
-        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933528/shots-and-stories/dahny2b4qjapceeog4vw.jpg"
+        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938108/shots-and-stories/brs69yotw2jjzuwzmdoq.jpg",
+        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938108/shots-and-stories/ccx2jkb6xrgx0ghrzc98.jpg"
       ]
     },
     {
-      "id": "a1786933970839",
-      "title": "Album 2",
-      "tags": [],
-      "description": "",
-      "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933957/shots-and-stories/fvviubo55f920tdrgn7m.jpg",
+      "id": "a2",
+      "title": "City Whispers",
+      "tags": [
+        "Urban",
+        "Street"
+      ],
+      "description": "Urban geometry, solitude in crowds, and the quiet poetry hidden in concrete streets.",
+      "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938558/shots-and-stories/mheaxdknrifghmpmw2xe.jpg",
       "images": [
-        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933957/shots-and-stories/fvviubo55f920tdrgn7m.jpg",
-        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933967/shots-and-stories/q8b21ros85pseuymdhgw.jpg"
+        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938558/shots-and-stories/mheaxdknrifghmpmw2xe.jpg",
+        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938640/shots-and-stories/hxyqiej0evgk89me69oh.jpg"
       ]
     },
     {
-      "id": "a1786933982557",
-      "title": "Album 3",
-      "tags": [],
-      "description": "",
-      "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933981/shots-and-stories/diownkvoq2cdkvgzgwtu.jpg",
+      "id": "a3",
+      "title": "Still Water",
+      "tags": [
+        "Nature",
+        "Landscape"
+      ],
+      "description": "Reflections, stillness, and the meditative calm of nature's quieter moments by the lake.",
+      "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938658/shots-and-stories/wugzcsl4ev076pz5dh1j.jpg",
       "images": [
-        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933981/shots-and-stories/diownkvoq2cdkvgzgwtu.jpg"
+        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938658/shots-and-stories/wugzcsl4ev076pz5dh1j.jpg",
+        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938658/shots-and-stories/rvy3qicrzdrpzkfjgpd2.jpg"
       ]
     }
   ],
   "hero": [
     {
-      "id": "h1786933483182sl5",
-      "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933482/shots-and-stories/kavtid96244slbuggpes.jpg",
+      "id": "h1786938475526oud",
+      "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938474/shots-and-stories/vjm5l6uqisoix3uw8aeg.jpg",
       "label": "",
       "title": "",
       "albumId": null
     },
     {
-      "id": "h1786933483225p6x",
-      "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933482/shots-and-stories/tvmsm1ubhlmbfszo9zqu.jpg",
+      "id": "h1786938477577suo",
+      "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938477/shots-and-stories/dttvphxv3iiwigh6j42e.jpg",
       "label": "",
       "title": "",
       "albumId": null
     }
   ],
   "about": {
-    "heading": "About Us",
+    "heading": "Sujay Hawaldar",
     "photo": "https://farm66.staticflickr.com/65535/buddyicons/145777283@N07_r.jpg?1713869404",
-    "body": "Photography is a way of feeling, of touching, of loving. What you have caught on film is captured forever.\n\nI am based in Bengaluru, chasing light and stories across India and beyond. Every frame here is a short. Every album, a story worth telling."
+    "body": "Welcome to ShotsAndStories!\n\nWhere moments are captured in their purest, unscripted form.\n\n \nAt ShotsAndStories, we specialise in capturing the raw emotions, from the tender moments shared during a ceremony to the joyous celebrations on the dance floor; fleeting glances, and spontaneous interactions that make each moment unique. From the laughter shared between friends to the quiet contemplation of an individual lost in thought, we believe that every shot tells a story.\n\n \nOur teams of experienced photographers work closely with you to understand your vision and bring it to life. A keen eye for detail and a passion for storytelling. Whether it's a Wedding, a Birthday party, a Baby bump, a Family gathering; we strive to document the essence of each moment with authenticity and artistry.\n\n \nBrowse through our portfolio to see our work, and imagine the possibilities for your special day. Your event deserves to be told, and we're honored to be a part of it.\n\n \nReach out to us to schedule a consultation, and let us help you create memories that will last a lifetime."
   },
   "theme": {
     "primary": "#D4501A",
