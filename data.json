@@ -1,0 +1,64 @@
+{
+  "albums": [
+    {
+      "id": "a1786933922382",
+      "title": "New Album",
+      "tags": [],
+      "description": "",
+      "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933528/shots-and-stories/bu8zao3bvcehnyb91p4r.jpg",
+      "images": [
+        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933528/shots-and-stories/bu8zao3bvcehnyb91p4r.jpg",
+        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933528/shots-and-stories/dahny2b4qjapceeog4vw.jpg"
+      ]
+    },
+    {
+      "id": "a1786933970839",
+      "title": "Album 2",
+      "tags": [],
+      "description": "",
+      "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933957/shots-and-stories/fvviubo55f920tdrgn7m.jpg",
+      "images": [
+        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933957/shots-and-stories/fvviubo55f920tdrgn7m.jpg",
+        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933967/shots-and-stories/q8b21ros85pseuymdhgw.jpg"
+      ]
+    },
+    {
+      "id": "a1786933982557",
+      "title": "Album 3",
+      "tags": [],
+      "description": "",
+      "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933981/shots-and-stories/diownkvoq2cdkvgzgwtu.jpg",
+      "images": [
+        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933981/shots-and-stories/diownkvoq2cdkvgzgwtu.jpg"
+      ]
+    }
+  ],
+  "hero": [
+    {
+      "id": "h1786933483182sl5",
+      "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933482/shots-and-stories/kavtid96244slbuggpes.jpg",
+      "label": "",
+      "title": "",
+      "albumId": null
+    },
+    {
+      "id": "h1786933483225p6x",
+      "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933482/shots-and-stories/tvmsm1ubhlmbfszo9zqu.jpg",
+      "label": "",
+      "title": "",
+      "albumId": null
+    }
+  ],
+  "about": {
+    "heading": "About Us",
+    "photo": "https://farm66.staticflickr.com/65535/buddyicons/145777283@N07_r.jpg?1713869404",
+    "body": "Photography is a way of feeling, of touching, of loving. What you have caught on film is captured forever.\n\nI am based in Bengaluru, chasing light and stories across India and beyond. Every frame here is a short. Every album, a story worth telling."
+  },
+  "theme": {
+    "primary": "#D4501A",
+    "accent": "#2A7D6F",
+    "dark": "#1a1a1a",
+    "fontKey": "josefin",
+    "instagramEmbedCode": ""
+  }
+}
