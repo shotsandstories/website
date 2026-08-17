@@ -218,7 +218,7 @@ nav ul li a.active::after { width: 20px; }
 .see-more-btn:hover { color: var(--orange); }
 
 /* ═══ ABOUT ═══ */
-.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+.about-grid { display: grid; grid-template-columns: 0.5fr 1fr; gap: 60px; align-items: start; }
 .about-img-wrap img { width: 100%; display: block; }
 .about-content h3 {
   font-family: var(--font-main); font-weight: 700;
