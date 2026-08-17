@@ -1,67 +1,35 @@
 {
   "albums": [
     {
-      "id": "a1",
-      "title": "Golden Light",
-      "description": "Photography is a way of feeling, of touching, of loving. What you have caught on film is captured forever.",
-      "tags": [
-        "Portrait",
-        "Golden Hour"
-      ],
-      "cover": "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1400&q=80",
+      "id": "a1786933922382",
+      "title": "New Album",
+      "tags": [],
+      "description": "",
+      "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933528/shots-and-stories/bu8zao3bvcehnyb91p4r.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1400&q=80",
-        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=900&q=80",
-        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=900&q=80",
-        "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=900&q=80"
+        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933528/shots-and-stories/bu8zao3bvcehnyb91p4r.jpg",
+        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933528/shots-and-stories/dahny2b4qjapceeog4vw.jpg"
       ]
     },
     {
-      "id": "a2",
-      "title": "City Whispers",
-      "description": "Urban geometry, solitude in crowds, and the quiet poetry hidden in concrete streets.",
-      "tags": [
-        "Urban",
-        "Street"
-      ],
-      "cover": "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1400&q=80",
+      "id": "a1786933970839",
+      "title": "Album 2",
+      "tags": [],
+      "description": "",
+      "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933957/shots-and-stories/fvviubo55f920tdrgn7m.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1400&q=80",
-        "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=900&q=80",
-        "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=900&q=80",
-        "https://images.unsplash.com/photo-1514565131-fce0801e6f7e?w=900&q=80"
+        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933957/shots-and-stories/fvviubo55f920tdrgn7m.jpg",
+        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933967/shots-and-stories/q8b21ros85pseuymdhgw.jpg"
       ]
     },
     {
-      "id": "a3",
-      "title": "Still Water",
-      "description": "Reflections, stillness, and the meditative calm of nature's quieter moments by the lake.",
-      "tags": [
-        "Nature",
-        "Landscape"
-      ],
-      "cover": "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=1400&q=80",
+      "id": "a1786933982557",
+      "title": "Album 3",
+      "tags": [],
+      "description": "",
+      "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933981/shots-and-stories/diownkvoq2cdkvgzgwtu.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=1400&q=80",
-        "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80",
-        "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=900&q=80",
-        "https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=900&q=80"
-      ]
-    },
-    {
-      "id": "a4",
-      "title": "Into the Wild",
-      "description": "Mountains, mist, and the raw silence of places untouched by time.",
-      "tags": [
-        "Nature",
-        "Mountain"
-      ],
-      "cover": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1400&q=80",
-      "images": [
-        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1400&q=80",
-        "https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=900&q=80",
-        "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=900&q=80",
-        "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=900&q=80"
+        "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786933981/shots-and-stories/diownkvoq2cdkvgzgwtu.jpg"
       ]
     }
   ],
