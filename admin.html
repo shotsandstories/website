@@ -522,6 +522,13 @@ img { display: block; max-width: 100%; }
           <div class="hint">Separate paragraphs with a blank line.</div>
         </div>
       </div>
+
+      <div class="settings-group" style="max-width:600px">
+        <h4>Awards &amp; Recognition</h4>
+        <div class="hint" style="margin-bottom:16px">Shown as a short list under your bio. Certificate URL is optional — paste a link (e.g. Google Drive, or a hosted copy of the certificate) if you want "View Certificate" to be clickable; leave blank to just show the text.</div>
+        <div id="awards-list-adm"></div>
+        <button class="btn btn-white" onclick="addAwardRow()">+ Add Award</button>
+      </div>
     </div>
 
     <!-- SETTINGS -->
@@ -679,7 +686,7 @@ const DEFAULT_DATA = {
     { id:'h4', url:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&q=85', label:'Nature', title:'Into the Wild', albumId:'a4' },
     { id:'h5', url:'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1600&q=85', label:'Serenity', title:'Open Horizons', albumId:null }
   ],
-  about: { heading:'About Us', photo:'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&q=80', body:'Photography is a way of feeling, of touching, of loving. What you have caught on film is captured forever.\n\nI am based in Bengaluru, chasing light and stories across India and beyond. Every frame here is a short. Every album, a story worth telling.' },
+  about: { heading:'About Us', photo:'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&q=80', body:'Photography is a way of feeling, of touching, of loving. What you have caught on film is captured forever.\n\nI am based in Bengaluru, chasing light and stories across India and beyond. Every frame here is a short. Every album, a story worth telling.', awards:[] },
   theme: { primary:'#D4501A', accent:'#2A7D6F', dark:'#1a1a1a', fontKey:'josefin', instagramEmbedCode:'' }
 };
 
@@ -696,7 +703,7 @@ const FONT_OPTIONS = {
 };
 
 function getPw() { return localStorage.getItem(PW_KEY) || DEFAULT_PW; }
-function getData() { try { const r=localStorage.getItem(DB_KEY); const d=r?JSON.parse(r):DEFAULT_DATA; if(!d.hero) d.hero=DEFAULT_DATA.hero; if(!d.theme) d.theme=DEFAULT_DATA.theme; return d; } catch(e){return DEFAULT_DATA;} }
+function getData() { try { const r=localStorage.getItem(DB_KEY); const d=r?JSON.parse(r):DEFAULT_DATA; if(!d.hero) d.hero=DEFAULT_DATA.hero; if(!d.theme) d.theme=DEFAULT_DATA.theme; if(d.about&&!d.about.awards) d.about.awards=[]; return d; } catch(e){return DEFAULT_DATA;} }
 function saveData(d) { localStorage.setItem(DB_KEY,JSON.stringify(d)); }
 
 /* GITHUB PUBLISH */
@@ -1250,22 +1257,65 @@ function saveTheme(){
 }
 
 /* ABOUT */
+let awardsList=[];
+
 function loadAboutForm() {
   const a=getData().about||{};
   document.getElementById('ab-heading').value=a.heading||'';
   document.getElementById('ab-photo').value=a.photo||'';
   document.getElementById('ab-body').value=a.body||'';
+  awardsList=(a.awards||[]).map(aw=>({...aw}));
+  renderAwardsAdm();
 }
 function saveAbout() {
   const data=getData();
   data.about={
     heading:document.getElementById('ab-heading').value.trim(),
     photo:document.getElementById('ab-photo').value.trim(),
-    body:document.getElementById('ab-body').value
+    body:document.getElementById('ab-body').value,
+    awards:awardsList
+      .map(aw=>({title:(aw.title||'').trim(),issuer:(aw.issuer||'').trim(),year:(aw.year||'').trim(),url:(aw.url||'').trim()}))
+      .filter(aw=>aw.title)
   };
   saveData(data);
   toast('About page saved!');
 }
+
+/* AWARDS & RECOGNITION — working copy pattern, same as heroSlides: nothing
+   persists until "Save Changes" runs saveAbout() above. */
+function renderAwardsAdm(){
+  const g=document.getElementById('awards-list-adm');
+  if(!awardsList.length){
+    g.innerHTML=`<div style="font-size:11px;color:#bbb;letter-spacing:2px;padding:6px 0;text-transform:uppercase;margin-bottom:14px">No awards yet</div>`;
+    return;
+  }
+  g.innerHTML=awardsList.map((aw,i)=>`
+    <div style="border:1px solid #eee;padding:16px;margin-bottom:12px;position:relative">
+      <button class="rm-btn-hero" style="opacity:1" onclick="rmAward(${i})" title="Remove award">&#x2715;</button>
+      <div class="form-row">
+        <div class="form-field" style="margin-bottom:10px">
+          <label>Title</label>
+          <input type="text" value="${(aw.title||'').replace(/"/g,'&quot;')}" placeholder="e.g. Top 100 Finalist, Photography Category" oninput="awardsList[${i}].title=this.value">
+        </div>
+        <div class="form-field" style="margin-bottom:10px">
+          <label>Issuer</label>
+          <input type="text" value="${(aw.issuer||'').replace(/"/g,'&quot;')}" placeholder="e.g. WallMag Wedding Photography Awards" oninput="awardsList[${i}].issuer=this.value">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field" style="margin-bottom:0">
+          <label>Year</label>
+          <input type="text" value="${(aw.year||'').replace(/"/g,'&quot;')}" placeholder="2026" oninput="awardsList[${i}].year=this.value">
+        </div>
+        <div class="form-field" style="margin-bottom:0">
+          <label>Certificate URL (optional)</label>
+          <input type="text" value="${(aw.url||'').replace(/"/g,'&quot;')}" placeholder="https://..." oninput="awardsList[${i}].url=this.value">
+        </div>
+      </div>
+    </div>`).join('');
+}
+function addAwardRow(){ awardsList.push({title:'',issuer:'',year:'',url:''}); renderAwardsAdm(); }
+function rmAward(i){ awardsList.splice(i,1); renderAwardsAdm(); }
 
 /* EXPORT / IMPORT / RESET */
 function exportData(){const b=new Blob([JSON.stringify(getData(),null,2)],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='sns-backup.json';a.click();URL.revokeObjectURL(u);toast('Backup downloaded');}

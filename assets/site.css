@@ -226,6 +226,15 @@ nav ul li a.active::after { width: 20px; }
   color: var(--dark); margin-bottom: 18px;
 }
 .about-content p { font-family: var(--font-main); font-size: 14px; font-weight: 300; line-height: 1.9; color: #666; margin-bottom: 14px; }
+.about-recognition { margin-top: 30px; }
+.recognition-list { list-style: none; }
+.recognition-item { margin-bottom: 16px; }
+.recognition-item:last-child { margin-bottom: 0; }
+.ri-title { font-family: var(--font-main); font-size: 14px; font-weight: 400; color: #333; margin-bottom: 4px; }
+.ri-meta { font-family: var(--font-main); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--teal); }
+.ri-meta .sep { margin: 0 8px; opacity: 0.4; }
+.ri-link { color: var(--orange); text-decoration: none; }
+.ri-link:hover { text-decoration: underline; }
 
 /* ═══ CONTACT ═══ */
 .contact-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 620px; }

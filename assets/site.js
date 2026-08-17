@@ -19,10 +19,10 @@ const DEFAULT_DATA = {
     { id:'h4', url:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&q=85', label:'Nature', title:'Into the Wild', albumId:'a4' },
     { id:'h5', url:'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1600&q=85', label:'Serenity', title:'Open Horizons', albumId:null }
   ],
-  about: { heading:'About Us', photo:'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&q=80', body:"Photography is a way of feeling, of touching, of loving. What you have caught on film is captured forever — it remembers little things, long after you have forgotten everything.\n\nI am based in Hyderabad, chasing light and stories across India and beyond. Every frame here is a short. Every album, a story worth telling.\n\nAvailable for portrait sessions, travel assignments, and creative collaborations." },
+  about: { heading:'About Us', photo:'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&q=80', body:"Photography is a way of feeling, of touching, of loving. What you have caught on film is captured forever — it remembers little things, long after you have forgotten everything.\n\nI am based in Hyderabad, chasing light and stories across India and beyond. Every frame here is a short. Every album, a story worth telling.\n\nAvailable for portrait sessions, travel assignments, and creative collaborations.", awards:[] },
   theme: { primary:'#D4501A', accent:'#2A7D6F', dark:'#1a1a1a', fontKey:'josefin', instagramEmbedCode:'' }
 };
-function getData(){ try{const r=localStorage.getItem(DB_KEY);const d=r?JSON.parse(r):DEFAULT_DATA;if(!d.hero)d.hero=DEFAULT_DATA.hero;if(!d.theme)d.theme=DEFAULT_DATA.theme;return d;}catch(e){return DEFAULT_DATA;} }
+function getData(){ try{const r=localStorage.getItem(DB_KEY);const d=r?JSON.parse(r):DEFAULT_DATA;if(!d.hero)d.hero=DEFAULT_DATA.hero;if(!d.theme)d.theme=DEFAULT_DATA.theme;if(d.about&&!d.about.awards)d.about.awards=[];return d;}catch(e){return DEFAULT_DATA;} }
 
 /* REMOTE DATA — data.json is committed to the repo root by admin.html's
    "Publish to Live Site" button (GitHub Contents API). It's the actually-

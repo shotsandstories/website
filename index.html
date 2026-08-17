@@ -61,7 +61,13 @@
     <h2 class="section-heading" id="about-heading">About Us</h2>
     <div class="about-grid">
       <div class="about-img-wrap"><img id="about-img" src="https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&q=80" alt="About" loading="lazy"></div>
-      <div class="about-content" id="about-body-content"></div>
+      <div class="about-content">
+        <div id="about-body-content"></div>
+        <div class="about-recognition" id="about-recognition" style="display:none">
+          <h3>Recognition</h3>
+          <ul class="recognition-list" id="recognition-list"></ul>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -168,6 +174,16 @@ function renderAbout(){
   document.getElementById('about-heading').textContent=a.heading||'About Us';
   if(a.photo)document.getElementById('about-img').src=a.photo;
   document.getElementById('about-body-content').innerHTML=(a.body||'').split('\n\n').map(p=>p.trim()).filter(Boolean).map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
+
+  const awards=a.awards||[];
+  const wrap=document.getElementById('about-recognition');
+  if(!awards.length){ wrap.style.display='none'; return; }
+  wrap.style.display='';
+  document.getElementById('recognition-list').innerHTML=awards.map(aw=>`
+    <li class="recognition-item">
+      <div class="ri-title">${aw.title||''}</div>
+      <div class="ri-meta">${aw.issuer||''}${aw.year?` <span class="sep">&middot;</span> ${aw.year}`:''}${aw.url?` <span class="sep">&middot;</span> <a href="${aw.url}" target="_blank" class="ri-link">View Certificate &#8599;</a>`:''}</div>
+    </li>`).join('');
 }
 
 /* INSTAGRAM — hidden entirely unless admin has pasted an embed snippet in
