@@ -295,6 +295,11 @@ img { display: block; max-width: 100%; }
 }
 .upload-status.ok { color: #5a9e5e; }
 .upload-status.err { color: #c0544a; }
+.upload-cancel-btn {
+  background: none; border: none; color: #bbb; cursor: pointer;
+  font-size: 10px; padding: 0; vertical-align: middle;
+}
+.upload-cancel-btn:hover { color: #c0544a; }
 
 /* hero tab */
 .hero-grid {
@@ -938,14 +943,19 @@ function isVideoUrl(url){ return typeof url==='string' && url.indexOf('/video/up
 /* CLOUDINARY UPLOAD */
 const MAX_DIM = 2400;       // longest side in px — plenty for a full-screen lightbox, cuts most camera exports well under Cloudinary's per-file cap
 const JPEG_QUALITY = 0.86;  // re-encode quality/size balance for photography
+const MAX_VIDEO_MB = 100;   // Cloudinary's free-plan hard cap for video uploads. A file over this doesn't error quickly — it just uploads (slowly, since video skips client-side compression) and gets rejected only after the full body is sent, which looks exactly like a silent hang. Reject client-side instead, with a message that says why.
 
 function processFiles(files){
   files.forEach(f=>{
     const isImg=f.type.startsWith('image/');
     const isVid=f.type.startsWith('video/');
     if(!isImg && !isVid){ toast(f.name+' is not an image or video',true); return; }
+    if(isVid && f.size > MAX_VIDEO_MB*1024*1024){
+      toast(`${f.name} is ${(f.size/1024/1024).toFixed(0)}MB — over Cloudinary's ${MAX_VIDEO_MB}MB free-plan video cap. Compress it smaller (e.g. with HandBrake or ffmpeg) and try again.`,true);
+      return;
+    }
     const itemId='up'+Date.now()+Math.random().toString(36).slice(2,7);
-    addQueueItem(itemId,f.name,'upload-queue');
+    addQueueItem(itemId,f.name,'upload-queue',f.size);
     const onDone=(url)=>{
       mImgs.push(url);
       // only auto-fill Cover from a photo, never a video, and only if it's still empty
@@ -990,16 +1000,29 @@ function resizeImage(file,itemId){
   });
 }
 
-function addQueueItem(id,name,queueId){
+function addQueueItem(id,name,queueId,sizeBytes){
   const q=document.getElementById(queueId||'upload-queue');
   const el=document.createElement('div');
   el.className='upload-item';
   el.id='uq_'+id;
+  const sizeLabel=sizeBytes?` (${(sizeBytes/1024/1024).toFixed(1)}MB)`:'';
   el.innerHTML=`
-    <div class="upload-item-name">${name}</div>
+    <div class="upload-item-name">${name}${sizeLabel} <button class="upload-cancel-btn" onclick="cancelUpload('${id}')" title="Cancel upload">&#x2715;</button></div>
     <div class="upload-bar-track"><div class="upload-bar-fill" id="bar_${id}"></div></div>
     <div class="upload-status" id="status_${id}">Resizing&hellip;</div>`;
   q.appendChild(el);
+}
+
+/* Active XHRs keyed by queue-item id, so a stuck/unwanted upload can be
+   cancelled instead of the only recourse being "wait and hope" — see
+   cancelUpload() and the timeout wired up in uploadToCloudinary() below. */
+const activeUploads={};
+
+function cancelUpload(id){
+  const xhr=activeUploads[id];
+  if(xhr){ xhr.abort(); delete activeUploads[id]; }
+  removeQueueItem(id);
+  toast('Upload cancelled');
 }
 
 function removeQueueItem(id){
@@ -1034,6 +1057,12 @@ function uploadToCloudinary(file,itemId,filename,onSuccess,resourceType){
 
   const xhr=new XMLHttpRequest();
   xhr.open('POST',`https://api.cloudinary.com/v1_1/${CL_CLOUD}/${resourceType}/upload`);
+  // Without a timeout, a stalled connection just leaves the request pending
+  // forever with zero feedback — this is what "uploading video... for over
+  // an hour" was. Video gets a longer allowance since it skips client-side
+  // compression and can legitimately take a while on a slow connection.
+  xhr.timeout = resourceType==='video' ? 6*60*1000 : 2*60*1000;
+  activeUploads[itemId]=xhr;
 
   xhr.upload.onprogress=(e)=>{
     if(!e.lengthComputable) return;
@@ -1043,6 +1072,7 @@ function uploadToCloudinary(file,itemId,filename,onSuccess,resourceType){
   };
 
   xhr.onload=()=>{
+    delete activeUploads[itemId];
     if(xhr.status>=200 && xhr.status<300){
       let res;
       try{ res=JSON.parse(xhr.responseText); }
@@ -1063,7 +1093,8 @@ function uploadToCloudinary(file,itemId,filename,onSuccess,resourceType){
     }
   };
 
-  xhr.onerror=()=>uploadFailed(itemId,'Network error');
+  xhr.onerror=()=>{ delete activeUploads[itemId]; uploadFailed(itemId,'Network error'); };
+  xhr.ontimeout=()=>{ delete activeUploads[itemId]; uploadFailed(itemId,'Upload timed out — connection too slow or stalled'); };
   xhr.send(formData);
 }
 
@@ -1144,7 +1175,7 @@ function processHeroFiles(files){
   files.forEach(f=>{
     if(!f.type.startsWith('image/')){ toast(f.name+' is not an image',true); return; }
     const itemId='up'+Date.now()+Math.random().toString(36).slice(2,7);
-    addQueueItem(itemId,f.name,'hero-upload-queue');
+    addQueueItem(itemId,f.name,'hero-upload-queue',f.size);
     const onDone=(url)=>{
       heroSlides.push({id:'h'+Date.now()+Math.random().toString(36).slice(2,5),url,label:'',title:'',albumId:null});
       renderHeroGrid();
@@ -1160,7 +1191,7 @@ function heroReplaceFile(inp){
   const f=inp.files[0]; inp.value='';
   if(!f) return;
   const itemId='up'+Date.now()+Math.random().toString(36).slice(2,7);
-  addQueueItem(itemId,f.name,'hero-upload-queue');
+  addQueueItem(itemId,f.name,'hero-upload-queue',f.size);
   const onDone=(url)=>{ heroSlides[idx].url=url; renderHeroGrid(); };
   resizeImage(f,itemId)
     .then(blob=>uploadToCloudinary(blob,itemId,f.name,onDone))
