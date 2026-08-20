@@ -42,20 +42,6 @@
   ],
   "hero": [
     {
-      "id": "h1786938475526oud",
-      "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938474/shots-and-stories/vjm5l6uqisoix3uw8aeg.jpg",
-      "label": "",
-      "title": "",
-      "albumId": null
-    },
-    {
-      "id": "h1787217054926um5",
-      "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787217054/shots-and-stories/f6w1lckrkq5jhhoenays.jpg",
-      "label": "",
-      "title": "",
-      "albumId": null
-    },
-    {
       "id": "h1787217055074h8j",
       "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787217054/shots-and-stories/woqut14y04sallaibc1l.jpg",
       "label": "",
@@ -72,6 +58,20 @@
     {
       "id": "h17872184003651s2",
       "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787218399/shots-and-stories/pavhhp2aostfad2uxcah.jpg",
+      "label": "",
+      "title": "",
+      "albumId": null
+    },
+    {
+      "id": "h1787218850123aok",
+      "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787218849/shots-and-stories/kyowipg6glt6zalpgopy.jpg",
+      "label": "",
+      "title": "",
+      "albumId": null
+    },
+    {
+      "id": "h1787218850549wfm",
+      "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787218849/shots-and-stories/atbcli0xttmqqtxrviuu.jpg",
       "label": "",
       "title": "",
       "albumId": null
