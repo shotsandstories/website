@@ -82,9 +82,9 @@ function renderGalleries(){
       </div>
       <div class="gallery-thumbs">${thumbs.map((img,i)=>{
         if(!img) return `<div class="gallery-thumb" onclick="openAlbumLightbox('${a.id}',0)"></div>`;
-        const media=isVideoUrl(img)
-          ? `<video src="${img}" muted preload="metadata"></video><span class="video-badge">&#9654;</span>`
-          : `<img src="${img}" loading="lazy" alt="">`;
+        const media=isVideoUrl(img.url)
+          ? `<video src="${img.url}" muted preload="metadata"></video><span class="video-badge">&#9654;</span>`
+          : `<img src="${img.url}" loading="lazy" alt="">`;
         return `<div class="gallery-thumb" onclick="openAlbumLightbox('${a.id}',${i})">${media}</div>`;
       }).join('')}</div>
       <button class="see-more-btn" onclick="openAlbumLightbox('${a.id}',0)">See More</button>

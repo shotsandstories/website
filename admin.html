@@ -237,6 +237,17 @@ img { display: block; max-width: 100%; }
   font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #999;
 }
 .imgs-header span { font-size: 10px; letter-spacing: 2px; color: #ccc; text-transform: uppercase; }
+.sort-toggle { display: flex; border: 1px solid #ddd; flex-shrink: 0; }
+.sort-toggle-btn {
+  font-family: 'Raleway', sans-serif; font-size: 10px; font-weight: 500;
+  letter-spacing: 2px; text-transform: uppercase; color: #999;
+  background: #fff; border: none; padding: 7px 14px; cursor: pointer;
+  transition: all 0.2s;
+}
+.sort-toggle-btn:first-child { border-right: 1px solid #ddd; }
+.sort-toggle-btn.active { background: #1a1a1a; color: #fff; }
+.sort-toggle-btn:hover:not(.active) { background: #f5f5f5; }
+.img-item-adm.no-drag { cursor: default; }
 .imgs-grid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
   gap: 8px; margin-bottom: 14px; min-height: 50px;
@@ -613,8 +624,12 @@ img { display: block; max-width: 100%; }
 
       <div class="imgs-header">
         <h4>Images &amp; Videos</h4>
-        <span>Drag to reorder &bull; First = cover</span>
+        <div class="sort-toggle">
+          <button type="button" id="sort-manual-btn" class="sort-toggle-btn active" onclick="setSortMode('manual')">Manual Order</button>
+          <button type="button" id="sort-capture-btn" class="sort-toggle-btn" onclick="setSortMode('capture')">Capture Order</button>
+        </div>
       </div>
+      <div class="hint" id="sort-hint" style="margin-bottom:10px">Drag photos below to set a custom order. First photo becomes the cover unless you set one above.</div>
       <div class="imgs-grid" id="modal-imgs"></div>
 
       <div class="drop-zone" id="dz"
@@ -703,7 +718,24 @@ const FONT_OPTIONS = {
 };
 
 function getPw() { return localStorage.getItem(PW_KEY) || DEFAULT_PW; }
-function getData() { try { const r=localStorage.getItem(DB_KEY); const d=r?JSON.parse(r):DEFAULT_DATA; if(!d.hero) d.hero=DEFAULT_DATA.hero; if(!d.theme) d.theme=DEFAULT_DATA.theme; if(d.about&&!d.about.awards) d.about.awards=[]; return d; } catch(e){return DEFAULT_DATA;} }
+function getData() {
+  try {
+    const r=localStorage.getItem(DB_KEY); const d=r?JSON.parse(r):DEFAULT_DATA;
+    if(!d.hero) d.hero=DEFAULT_DATA.hero;
+    if(!d.theme) d.theme=DEFAULT_DATA.theme;
+    if(d.about&&!d.about.awards) d.about.awards=[];
+    // album.images used to be a flat url string[]; now each entry is
+    // {url, capturedAt} so Capture Order sorting has something to sort by.
+    // Migrate old-shape records on read (never auto-persisted, same pattern
+    // as the hero/theme backfills above) and default sortMode to 'manual'
+    // so every pre-existing album keeps behaving exactly as before.
+    if(d.albums) d.albums.forEach(a=>{
+      if(a.images && a.images.length && typeof a.images[0]==='string') a.images=a.images.map(u=>({url:u,capturedAt:null}));
+      if(!a.sortMode) a.sortMode='manual';
+    });
+    return d;
+  } catch(e){return DEFAULT_DATA;}
+}
 function saveData(d) { localStorage.setItem(DB_KEY,JSON.stringify(d)); }
 
 /* GITHUB PUBLISH */
@@ -873,10 +905,11 @@ function renderAlbGrid() {
 }
 
 /* MODAL */
-let mImgs=[], dragFrom=null;
+let mImgs=[], dragFrom=null, albumSortMode='manual';
 
 function openModal() {
   mImgs=[];
+  albumSortMode='manual';
   document.getElementById('edit-id').value='';
   document.getElementById('modal-ttl').textContent='New Album';
   ['m-title','m-tags','m-desc','m-cover','url-in'].forEach(id=>document.getElementById(id).value='');
@@ -887,7 +920,8 @@ function openModal() {
 function editAlbum(id) {
   const a=getData().albums.find(x=>x.id===id);
   if(!a) return;
-  mImgs=[...a.images];
+  mImgs=a.images.map(m=>({...m}));
+  albumSortMode=a.sortMode||'manual';
   document.getElementById('edit-id').value=id;
   document.getElementById('modal-ttl').textContent='Edit Album';
   document.getElementById('m-title').value=a.title;
@@ -902,6 +936,7 @@ function editAlbum(id) {
 function closeModal() {
   document.getElementById('modal').classList.remove('open');
   mImgs=[];
+  albumSortMode='manual';
   document.getElementById('upload-queue').innerHTML='';
 }
 
@@ -909,17 +944,20 @@ function renderMImgs() {
   const g=document.getElementById('modal-imgs');
   if(!mImgs.length) {
     g.innerHTML=`<div style="grid-column:1/-1;font-size:11px;color:#bbb;letter-spacing:2px;padding:6px 0;text-transform:uppercase">No images yet</div>`;
+    updateSortModeUI();
     return;
   }
+  const draggable=albumSortMode==='manual';
   g.innerHTML=mImgs.map((img,i)=>`
-    <div class="img-item-adm" draggable="true"
-      ondragstart="dStart(${i})" ondragover="dOver(event,${i})" ondrop="dDrop(event,${i})" ondragend="dEnd()">
-      ${isVideoUrl(img)
-        ? `<video src="${img}" muted preload="metadata"></video><span class="video-badge-adm">&#9654;</span>`
-        : `<img src="${img}" alt="" onerror="this.parentElement.style.background='#f0f0f0'">`}
+    <div class="img-item-adm${draggable?'':' no-drag'}" ${draggable?'draggable="true"':''}
+      ${draggable?`ondragstart="dStart(${i})" ondragover="dOver(event,${i})" ondrop="dDrop(event,${i})" ondragend="dEnd()"`:''}>
+      ${isVideoUrl(img.url)
+        ? `<video src="${img.url}" muted preload="metadata"></video><span class="video-badge-adm">&#9654;</span>`
+        : `<img src="${img.url}" alt="" onerror="this.parentElement.style.background='#f0f0f0'">`}
       ${i===0?`<span class="cover-badge">Cover</span>`:''}
       <button class="rm-btn" onclick="rmImg(${i})">&#x2715;</button>
     </div>`).join('');
+  updateSortModeUI();
 }
 
 function dStart(i){dragFrom=i;setTimeout(()=>document.querySelectorAll('.img-item-adm')[i]?.classList.add('dragging'),0);}
@@ -928,10 +966,45 @@ function dDrop(e,i){e.preventDefault();if(dragFrom===null||dragFrom===i)return;c
 function dEnd(){document.querySelectorAll('.img-item-adm').forEach(el=>el.classList.remove('dragging','drag-over'));}
 function rmImg(i){mImgs.splice(i,1);renderMImgs();}
 
+/* SORT ORDER — Capture Order sorts by EXIF capturedAt (oldest first,
+   undated images pushed to the end but keeping their relative order —
+   Array.sort is stable so that "end" group doesn't get shuffled). Manual
+   Order just leaves mImgs exactly as it is, freely drag-editable. Switching
+   modes doesn't touch anything until Save; it's the same working-copy
+   pattern as mImgs itself. */
+function sortMImgsByCapture(){
+  mImgs.sort((a,b)=>{
+    if(a.capturedAt && b.capturedAt) return a.capturedAt<b.capturedAt?-1:a.capturedAt>b.capturedAt?1:0;
+    if(a.capturedAt) return -1;
+    if(b.capturedAt) return 1;
+    return 0;
+  });
+}
+function setSortMode(mode){
+  albumSortMode=mode;
+  if(mode==='capture') sortMImgsByCapture();
+  renderMImgs();
+}
+function updateSortModeUI(){
+  const capBtn=document.getElementById('sort-capture-btn');
+  const manBtn=document.getElementById('sort-manual-btn');
+  if(!capBtn||!manBtn) return;
+  capBtn.classList.toggle('active',albumSortMode==='capture');
+  manBtn.classList.toggle('active',albumSortMode==='manual');
+  const photos=mImgs.filter(m=>!isVideoUrl(m.url)); // videos never carry a capture date, don't count them
+  const withDates=photos.filter(m=>m.capturedAt).length;
+  const hint=document.getElementById('sort-hint');
+  if(!hint) return;
+  hint.textContent = albumSortMode==='capture'
+    ? (photos.length ? `${withDates} of ${photos.length} photo${photos.length!==1?'s':''} have capture-date info — sorted oldest to newest, undated ones pushed to the end. First photo becomes the cover unless you set one above.` : 'No photos yet.')
+    : 'Drag photos below to set a custom order. First photo becomes the cover unless you set one above.';
+}
+
 function addUrl() {
   const v=document.getElementById('url-in').value.trim();
   if(!v||!v.startsWith('http')) return toast('Enter a valid URL starting with http',true);
-  mImgs.push(v);
+  mImgs.push({url:v,capturedAt:null});
+  if(albumSortMode==='capture') sortMImgsByCapture();
   if(mImgs.length===1) document.getElementById('m-cover').value=v;
   document.getElementById('url-in').value='';
   renderMImgs();
@@ -941,16 +1014,99 @@ function dzLeave(){document.getElementById('dz').classList.remove('active-dz');}
 function dzDrop(e){e.preventDefault();dzLeave();processFiles(Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')||f.type.startsWith('video/')));}
 function filesIn(inp){processFiles(Array.from(inp.files));inp.value='';}
 
-/* Photos and videos share the same album.images string array — a URL is
-   recognized as video by Cloudinary's own URL convention
-   (.../video/upload/... vs .../image/upload/...), since that's what
-   uploadToCloudinary() below actually produces. No schema change needed. */
+/* Photos and videos share the same album.images array — each entry is
+   {url, capturedAt}, capturedAt being the photo's EXIF capture date (null
+   for videos, pasted URLs, and photos without EXIF) used by Capture Order
+   sorting below. A URL is recognized as video by Cloudinary's own URL
+   convention (.../video/upload/... vs .../image/upload/...), since that's
+   what uploadToCloudinary() below actually produces. isVideoUrl() itself
+   still takes a plain URL string — callers pass img.url. */
 function isVideoUrl(url){ return typeof url==='string' && url.indexOf('/video/upload/')!==-1; }
 
 /* CLOUDINARY UPLOAD */
 const MAX_DIM = 2400;       // longest side in px — plenty for a full-screen lightbox, cuts most camera exports well under Cloudinary's per-file cap
 const JPEG_QUALITY = 0.86;  // re-encode quality/size balance for photography
 const MAX_VIDEO_MB = 100;   // Cloudinary's free-plan hard cap for video uploads. A file over this doesn't error quickly — it just uploads (slowly, since video skips client-side compression) and gets rejected only after the full body is sent, which looks exactly like a silent hang. Reject client-side instead, with a message that says why.
+
+/* EXIF CAPTURE DATE — reads a JPEG's DateTimeOriginal tag (falls back to
+   DateTime) client-side, before resizeImage() re-encodes the file and
+   destroys any EXIF it had. Hand-rolled rather than pulling in a library:
+   this project has no build step and only needs two tags out of the whole
+   EXIF spec, so a ~60-line parser is a better fit than a dependency.
+   Returns an ISO 8601 string, or null if the file isn't a JPEG, has no
+   EXIF, or has EXIF without a date tag (screenshots, WhatsApp-forwarded
+   images, PNGs, etc. all resolve to null and fall back to upload order). */
+function parseExifCaptureDate(buf){
+  try{
+    const view=new DataView(buf);
+    if(view.byteLength<4||view.getUint16(0)!==0xFFD8) return null; // not a JPEG
+    let offset=2;
+    while(offset<view.byteLength-1){
+      if(view.getUint8(offset)!==0xFF) break;
+      const marker=view.getUint8(offset+1);
+      if(marker===0xD8||marker===0xD9){ offset+=2; continue; } // SOI/EOI, no length field
+      if(offset+4>view.byteLength) break;
+      const segLen=view.getUint16(offset+2);
+      if(marker===0xE1){ // APP1 — where EXIF lives
+        const date=parseExifApp1(view,offset+4,segLen-2);
+        if(date) return date;
+      }
+      if(marker===0xDA) break; // start of scan — image data follows, no more metadata markers
+      offset+=2+segLen;
+    }
+    return null;
+  }catch(e){ return null; }
+}
+function parseExifApp1(view,start,length){
+  if(view.getUint32(start)!==0x45786966 || view.getUint16(start+4)!==0x0000) return null; // "Exif\0\0"
+  const tiffStart=start+6;
+  const little=view.getUint16(tiffStart)===0x4949; // 'II' little-endian, 'MM' big-endian
+  const g16=(o)=>view.getUint16(o,little);
+  const g32=(o)=>view.getUint32(o,little);
+  if(g16(tiffStart+2)!==0x002A) return null; // TIFF magic number
+  const ifd0Offset=tiffStart+g32(tiffStart+4);
+  function readIfdEntries(ifdOffset){
+    const count=g16(ifdOffset);
+    const entries=[];
+    for(let i=0;i<count;i++){
+      const eOff=ifdOffset+2+i*12;
+      entries.push({ tag:g16(eOff), type:g16(eOff+2), count:g32(eOff+4), valueOffset:eOff+8 });
+    }
+    return entries;
+  }
+  function readAscii(entry){
+    const len=entry.count;
+    const dataStart = len<=4 ? entry.valueOffset : tiffStart+g32(entry.valueOffset);
+    let str='';
+    for(let i=0;i<len-1;i++) str+=String.fromCharCode(view.getUint8(dataStart+i)); // drop trailing \0
+    return str;
+  }
+  function toIso(exifDate){
+    // "YYYY:MM:DD HH:MM:SS" -> "YYYY-MM-DDTHH:MM:SS"
+    const m=/^(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})/.exec(exifDate);
+    return m ? `${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}` : null;
+  }
+  const ifd0=readIfdEntries(ifd0Offset);
+  const exifIfdEntry=ifd0.find(e=>e.tag===0x8769);
+  if(exifIfdEntry){
+    const exifIfdOffset=tiffStart+g32(exifIfdEntry.valueOffset);
+    const exifEntries=readIfdEntries(exifIfdOffset);
+    const dto=exifEntries.find(e=>e.tag===0x9003); // DateTimeOriginal
+    if(dto){ const iso=toIso(readAscii(dto)); if(iso) return iso; }
+  }
+  const dt=ifd0.find(e=>e.tag===0x0132); // DateTime (fallback — file modify date, less accurate)
+  if(dt){ const iso=toIso(readAscii(dt)); if(iso) return iso; }
+  return null;
+}
+function readCaptureDate(file){
+  if(!file || file.type!=='image/jpeg') return Promise.resolve(null);
+  // Only read the first 128KB — EXIF (including its embedded thumbnail,
+  // the largest thing in it) is virtually always well under that, and
+  // slicing avoids pulling a full multi-MB photo into memory just to read
+  // its header. If EXIF genuinely runs past the slice, parseExifCaptureDate
+  // hits its own bounds check and returns null rather than throwing.
+  return file.slice(0,131072).arrayBuffer().then(parseExifCaptureDate).catch(()=>null);
+}
 
 function processFiles(files){
   files.forEach(f=>{
@@ -963,21 +1119,30 @@ function processFiles(files){
     }
     const itemId='up'+Date.now()+Math.random().toString(36).slice(2,7);
     addQueueItem(itemId,f.name,'upload-queue',f.size);
-    const onDone=(url)=>{
-      mImgs.push(url);
+    const onDone=(url,capturedAt)=>{
+      mImgs.push({url,capturedAt:capturedAt||null});
       // only auto-fill Cover from a photo, never a video, and only if it's still empty
       if(!isVideoUrl(url) && !document.getElementById('m-cover').value.trim()) document.getElementById('m-cover').value=url;
+      // if this album is in Capture Order mode, keep it correctly ordered
+      // as each upload lands rather than making the admin re-click it
+      if(albumSortMode==='capture') sortMImgsByCapture();
       renderMImgs();
     };
     if(isVid){
       // no client-side compression for video — canvas can't touch it, and
       // there's no lightweight in-browser transcoder worth adding here.
       // Cloudinary's own error (size cap, format, etc.) surfaces as-is via uploadFailed.
-      uploadToCloudinary(f,itemId,f.name,onDone,'video');
+      // Videos never carry a usable capturedAt for our purposes — null.
+      uploadToCloudinary(f,itemId,f.name,(url)=>onDone(url,null),'video');
     } else {
-      resizeImage(f,itemId)
-        .then(blob=>uploadToCloudinary(blob,itemId,f.name,onDone,'image'))
-        .catch(()=>uploadToCloudinary(f,itemId,f.name,onDone,'image')); // resize failed (odd format, etc.) — fall back to the original file
+      // Read EXIF from the ORIGINAL file before resizeImage() re-encodes it
+      // through a canvas — canvas.toBlob() output carries no EXIF at all,
+      // so this has to happen first or the capture date is gone for good.
+      readCaptureDate(f).then(capturedAt=>{
+        resizeImage(f,itemId)
+          .then(blob=>uploadToCloudinary(blob,itemId,f.name,(url)=>onDone(url,capturedAt),'image'))
+          .catch(()=>uploadToCloudinary(f,itemId,f.name,(url)=>onDone(url,capturedAt),'image')); // resize failed (odd format, etc.) — fall back to the original file
+      });
     }
   });
 }
@@ -1110,14 +1275,15 @@ function saveAlbum() {
   if(!title) return toast('Album title is required',true);
   const tags=document.getElementById('m-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
   const desc=document.getElementById('m-desc').value.trim();
-  const cover=document.getElementById('m-cover').value.trim()||(mImgs.find(u=>!isVideoUrl(u))||mImgs[0]||'');
+  const coverFallback=mImgs.find(m=>!isVideoUrl(m.url))||mImgs[0];
+  const cover=document.getElementById('m-cover').value.trim()||(coverFallback?coverFallback.url:'');
   const eid=document.getElementById('edit-id').value;
   const data=getData();
   if(eid){
     const idx=data.albums.findIndex(a=>a.id===eid);
-    if(idx>-1) data.albums[idx]={id:eid,title,tags,description:desc,cover,images:[...mImgs]};
+    if(idx>-1) data.albums[idx]={id:eid,title,tags,description:desc,cover,sortMode:albumSortMode,images:mImgs.map(m=>({...m}))};
   } else {
-    data.albums.push({id:'a'+Date.now(),title,tags,description:desc,cover,images:[...mImgs]});
+    data.albums.push({id:'a'+Date.now(),title,tags,description:desc,cover,sortMode:albumSortMode,images:mImgs.map(m=>({...m}))});
   }
   saveData(data);
   closeModal();

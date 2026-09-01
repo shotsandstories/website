@@ -22,7 +22,21 @@ const DEFAULT_DATA = {
   about: { heading:'About Us', photo:'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&q=80', body:"Photography is a way of feeling, of touching, of loving. What you have caught on film is captured forever — it remembers little things, long after you have forgotten everything.\n\nI am based in Hyderabad, chasing light and stories across India and beyond. Every frame here is a short. Every album, a story worth telling.\n\nAvailable for portrait sessions, travel assignments, and creative collaborations.", awards:[] },
   theme: { primary:'#D4501A', accent:'#2A7D6F', dark:'#1a1a1a', fontKey:'josefin', instagramEmbedCode:'' }
 };
-function getData(){ try{const r=localStorage.getItem(DB_KEY);const d=r?JSON.parse(r):DEFAULT_DATA;if(!d.hero)d.hero=DEFAULT_DATA.hero;if(!d.theme)d.theme=DEFAULT_DATA.theme;if(d.about&&!d.about.awards)d.about.awards=[];return d;}catch(e){return DEFAULT_DATA;} }
+function getData(){
+  try{
+    const r=localStorage.getItem(DB_KEY);const d=r?JSON.parse(r):DEFAULT_DATA;
+    if(!d.hero)d.hero=DEFAULT_DATA.hero;
+    if(!d.theme)d.theme=DEFAULT_DATA.theme;
+    if(d.about&&!d.about.awards)d.about.awards=[];
+    // album.images migration — see the matching comment in admin.html's
+    // getData(); both files must stay in sync on this.
+    if(d.albums) d.albums.forEach(a=>{
+      if(a.images && a.images.length && typeof a.images[0]==='string') a.images=a.images.map(u=>({url:u,capturedAt:null}));
+      if(!a.sortMode) a.sortMode='manual';
+    });
+    return d;
+  }catch(e){return DEFAULT_DATA;}
+}
 
 /* REMOTE DATA — data.json is committed to the repo root by admin.html's
    "Publish to Live Site" button (GitHub Contents API). It's the actually-
@@ -81,10 +95,13 @@ function applyTheme(){
   root.setProperty('--font-main',font.family);
 }
 
-/* Videos and photos share the same album.images string array — a URL is
-   recognized as video purely by Cloudinary's own URL convention
+/* Videos and photos share the same album.images array — each entry is
+   {url, capturedAt}, capturedAt being the photo's EXIF capture date (null
+   for videos and anything without EXIF) used by Capture Order sorting. A
+   URL is recognized as video purely by Cloudinary's own URL convention
    (.../video/upload/... vs .../image/upload/...), since that's what the
-   admin's upload pipeline actually produces. No schema change needed. */
+   admin's upload pipeline actually produces. isVideoUrl() itself still
+   takes a plain URL string — callers pass img.url, not the whole object. */
 function isVideoUrl(url){ return typeof url==='string' && url.indexOf('/video/upload/')!==-1; }
 
 /* PANEL TOGGLE */
@@ -126,7 +143,7 @@ function lbClose(){
 }
 function lbMove(d){lbIdx=(lbIdx+d+lbImgs.length)%lbImgs.length;lbRefresh();}
 function lbRefresh(){
-  const url=lbImgs[lbIdx];
+  const url=lbImgs[lbIdx].url;
   const imgEl=document.getElementById('lb-img');
   const vidEl=document.getElementById('lb-video');
   if(isVideoUrl(url)){
