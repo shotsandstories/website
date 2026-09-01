@@ -6,6 +6,7 @@
       "tags": [],
       "description": "",
       "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938108/shots-and-stories/brs69yotw2jjzuwzmdoq.jpg",
+      "sortMode": "capture",
       "images": [
         {
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228166/shots-and-stories/dag1x1dedyflyimzqlum.jpg",
@@ -279,8 +280,7 @@
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228304/shots-and-stories/qwhyifpgbvcqxspchozu.jpg",
           "capturedAt": null
         }
-      ],
-      "sortMode": "manual"
+      ]
     },
     {
       "id": "a2",
