@@ -130,7 +130,19 @@ function openDrawer(id){
 function closeDrawer(){ document.getElementById('album-drawer').classList.remove('open'); }
 function drawerNav(dir){ const data=getData(); const idx=data.albums.findIndex(a=>a.id===currentAlbumId); const next=data.albums[(idx+dir+data.albums.length)%data.albums.length]; if(next)openDrawer(next.id); }
 
-/* LIGHTBOX — shows either #lb-img or #lb-video depending on the current item */
+/* LIGHTBOX — shows either #lb-img or #lb-video depending on the current item.
+   Two entry points: lbOpen(i) opens it directly against whatever lbImgs
+   already holds (used by the drawer's own image grid); openAlbumLightbox()
+   is for jumping straight into an album's lightbox from a thumbnail
+   elsewhere on the page (e.g. a gallery-thumb on galleries.html) without
+   opening the drawer first — it just points lbImgs/currentAlbumId at that
+   album, then calls lbOpen(). */
+function openAlbumLightbox(albumId,idx){
+  const data=getData(); const a=data.albums.find(x=>x.id===albumId); if(!a) return;
+  currentAlbumId=albumId;
+  lbImgs=a.images;
+  lbOpen(idx);
+}
 function lbOpen(i){lbIdx=i;document.getElementById('lightbox').classList.add('open');lbRefresh();document.addEventListener('keydown',lbKey);}
 function lbClose(){
   document.getElementById('lightbox').classList.remove('open');
