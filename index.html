@@ -91,23 +91,6 @@
   </section>
 </div>
 
-<!-- ALBUM DRAWER -->
-<div id="album-drawer">
-  <div class="drawer-topbar">
-    <button class="drawer-back" onclick="closeDrawer()">&#8592; Back</button>
-    <button class="drawer-close-x" onclick="closeDrawer()">&#x2715;</button>
-  </div>
-  <h2 id="drawer-title"></h2>
-  <div id="drawer-cats"></div>
-  <p id="drawer-desc"></p>
-  <div class="album-images" id="drawer-images"></div>
-  <div class="drawer-nav">
-    <button onclick="drawerNav(-1)">&#8592; Prev</button>
-    <span class="sep">/</span>
-    <button onclick="drawerNav(1)">Next &#8594;</button>
-  </div>
-</div>
-
 <!-- LIGHTBOX -->
 <div id="lightbox">
   <button class="lb-close" onclick="lbClose()">&#x2715;</button>
@@ -147,7 +130,7 @@ function buildHero(){
         <div class="hero-slide-label">${String(i+1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')}${s.label?` &nbsp;&mdash;&nbsp; ${s.label}`:''}</div>
         ${s.title?`<div class="hero-slide-title">${s.title}</div>`:''}
         ${album?`<div class="hero-slide-cats">${album.tags.map((c,j)=>j===0?c:`<span class="sep">/</span>${c}`).join('')}</div>`:''}
-        ${album?`<button class="hero-view-btn" onclick="openDrawer('${album.id}')">View Album</button>`:`<a class="hero-view-btn" href="galleries">View Album</a>`}
+        ${album?`<button class="hero-view-btn" onclick="openAlbumLightbox('${album.id}',0)">View Album</button>`:`<a class="hero-view-btn" href="galleries">View Album</a>`}
       </div>
     </div>`;
   }).join('');

@@ -1,6 +1,6 @@
 /* ═══ SHOTS & STORIES — SHARED SITE LOGIC ═══
    Loaded by both index.html and galleries.html.
-   Contains: data access, left-panel toggle, album drawer, lightbox, toast.
+   Contains: data access, left-panel toggle, lightbox, toast.
    Page-specific rendering (hero, about, galleries list, scroll-spy) lives
    in each page's own inline <script> block, after this file loads. */
 
@@ -106,40 +106,15 @@ function initPanelState(){
   else { panel.classList.remove('visible'); }
 }
 
-/* DRAWER */
-let currentAlbumId=null, lbImgs=[], lbIdx=0;
-function openDrawer(id){
-  const data=getData(); const a=data.albums.find(x=>x.id===id); if(!a)return;
-  currentAlbumId=id;
-  document.getElementById('drawer-title').textContent=a.title;
-  document.getElementById('drawer-desc').textContent=a.description;
-  document.getElementById('drawer-cats').innerHTML=a.tags.map((t,i)=>i===0?t:`<span class="sep">/</span>${t}`).join('');
-  lbImgs=a.images;
-  const imgs=a.images; let rows=[];
-  if(imgs.length>0)rows.push({cols:1,imgs:[imgs[0]]});
-  for(let i=1;i<imgs.length;i+=2)rows.push({cols:Math.min(2,imgs.length-i),imgs:imgs.slice(i,i+2)});
-  document.getElementById('drawer-images').innerHTML=rows.map(row=>`<div class="album-img-row row-${row.cols}">${row.imgs.map(img=>{
-    const gi=imgs.indexOf(img);
-    const media=isVideoUrl(img)
-      ? `<video src="${img}" muted preload="metadata"></video><span class="video-badge">&#9654;</span>`
-      : `<img src="${img}" loading="lazy" alt="">`;
-    return `<div class="album-img-item" onclick="lbOpen(${gi})">${media}<button class="share-btn">Share</button></div>`;
-  }).join('')}</div>`).join('');
-  const drawer=document.getElementById('album-drawer'); drawer.classList.add('open'); drawer.scrollTo(0,0);
-}
-function closeDrawer(){ document.getElementById('album-drawer').classList.remove('open'); }
-function drawerNav(dir){ const data=getData(); const idx=data.albums.findIndex(a=>a.id===currentAlbumId); const next=data.albums[(idx+dir+data.albums.length)%data.albums.length]; if(next)openDrawer(next.id); }
-
-/* LIGHTBOX — shows either #lb-img or #lb-video depending on the current item.
-   Two entry points: lbOpen(i) opens it directly against whatever lbImgs
-   already holds (used by the drawer's own image grid); openAlbumLightbox()
-   is for jumping straight into an album's lightbox from a thumbnail
-   elsewhere on the page (e.g. a gallery-thumb on galleries.html) without
-   opening the drawer first — it just points lbImgs/currentAlbumId at that
-   album, then calls lbOpen(). */
+/* LIGHTBOX — shows either #lb-img or #lb-video depending on the current
+   item. There's no intermediate album-detail view anymore (the old drawer
+   was removed) — clicking any album entry point (thumbnail, title, "See
+   More", hero's "View Album") goes straight into the lightbox via
+   openAlbumLightbox(), which points lbImgs at that album's images and
+   opens lbOpen() at the given index. */
+let lbImgs=[], lbIdx=0;
 function openAlbumLightbox(albumId,idx){
-  const data=getData(); const a=data.albums.find(x=>x.id===albumId); if(!a) return;
-  currentAlbumId=albumId;
+  const data=getData(); const a=data.albums.find(x=>x.id===albumId); if(!a||!a.images.length) return;
   lbImgs=a.images;
   lbOpen(idx);
 }

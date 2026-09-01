@@ -55,23 +55,6 @@
   </section>
 </div>
 
-<!-- ALBUM DRAWER -->
-<div id="album-drawer">
-  <div class="drawer-topbar">
-    <button class="drawer-back" onclick="closeDrawer()">&#8592; Back</button>
-    <button class="drawer-close-x" onclick="closeDrawer()">&#x2715;</button>
-  </div>
-  <h2 id="drawer-title"></h2>
-  <div id="drawer-cats"></div>
-  <p id="drawer-desc"></p>
-  <div class="album-images" id="drawer-images"></div>
-  <div class="drawer-nav">
-    <button onclick="drawerNav(-1)">&#8592; Prev</button>
-    <span class="sep">/</span>
-    <button onclick="drawerNav(1)">Next &#8594;</button>
-  </div>
-</div>
-
 <!-- LIGHTBOX -->
 <div id="lightbox">
   <button class="lb-close" onclick="lbClose()">&#x2715;</button>
@@ -93,17 +76,18 @@ function renderGalleries(){
     const thumbs=[...a.images.slice(0,3)]; while(thumbs.length<3)thumbs.push('');
     return `<div class="gallery-section">
       <div class="gallery-section-head">
-        <div class="gshead-title" onclick="openDrawer('${a.id}')">${a.title}</div>
+        <div class="gshead-title" onclick="openAlbumLightbox('${a.id}',0)">${a.title}</div>
         <div class="gshead-cats">${a.tags.map((t,i)=>i===0?t:`<span class="sep">/</span>${t}`).join('')}</div>
+        ${a.description?`<div class="gshead-desc">${a.description}</div>`:''}
       </div>
       <div class="gallery-thumbs">${thumbs.map((img,i)=>{
-        if(!img) return '<div class="gallery-thumb" onclick="openDrawer(\''+a.id+'\')"></div>';
+        if(!img) return `<div class="gallery-thumb" onclick="openAlbumLightbox('${a.id}',0)"></div>`;
         const media=isVideoUrl(img)
           ? `<video src="${img}" muted preload="metadata"></video><span class="video-badge">&#9654;</span>`
           : `<img src="${img}" loading="lazy" alt="">`;
         return `<div class="gallery-thumb" onclick="openAlbumLightbox('${a.id}',${i})">${media}</div>`;
       }).join('')}</div>
-      <button class="see-more-btn" onclick="openDrawer('${a.id}')">See More</button>
+      <button class="see-more-btn" onclick="openAlbumLightbox('${a.id}',0)">See More</button>
     </div>`;
   }).join('');
 }
