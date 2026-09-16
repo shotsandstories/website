@@ -444,6 +444,7 @@
       ],
       "description": "Reflections, stillness, and the meditative calm of nature's quieter moments by the lake.",
       "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938658/shots-and-stories/wugzcsl4ev076pz5dh1j.jpg",
+      "sortMode": "manual",
       "images": [
         {
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938658/shots-and-stories/wugzcsl4ev076pz5dh1j.jpg",
@@ -452,9 +453,12 @@
         {
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938658/shots-and-stories/rvy3qicrzdrpzkfjgpd2.jpg",
           "capturedAt": null
+        },
+        {
+          "url": "https://youtu.be/YWNwC9T3wT8?si=zcE559DsXs7dVrQr",
+          "capturedAt": null
         }
-      ],
-      "sortMode": "manual"
+      ]
     },
     {
       "id": "a1787248320882",
