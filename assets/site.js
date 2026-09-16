@@ -104,6 +104,24 @@ function applyTheme(){
    takes a plain URL string — callers pass img.url, not the whole object. */
 function isVideoUrl(url){ return typeof url==='string' && url.indexOf('/video/upload/')!==-1; }
 
+/* YouTube support — for videos too large for Cloudinary's free-plan 100MB
+   cap. These aren't uploaded through our pipeline at all: the admin
+   uploads the file to YouTube (unlisted) directly on youtube.com, then
+   pastes the resulting link into the album's normal "paste a URL" field,
+   same as pasting an image URL. youtubeId() extracts the 11-char video id
+   from watch/embed/shorts/youtu.be link shapes; isYouTubeUrl() is just
+   "did that succeed". Rendered via a click-to-play facade (poster image +
+   play button, real <iframe> only injected on click) rather than an
+   always-live iframe — keeps YouTube's own chrome/branding out of the page
+   until someone actually presses play, and avoids loading YouTube's
+   ~500KB+ of embed JS for people who never click. */
+function youtubeId(url){
+  if(typeof url!=='string') return null;
+  const m=url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  return m?m[1]:null;
+}
+function isYouTubeUrl(url){ return !!youtubeId(url); }
+
 /* PANEL TOGGLE */
 let panelOpen=false;
 function togglePanel(){
@@ -140,21 +158,41 @@ function lbClose(){
   document.getElementById('lightbox').classList.remove('open');
   document.removeEventListener('keydown',lbKey);
   const v=document.getElementById('lb-video'); v.pause();
+  document.getElementById('lb-yt-frame').innerHTML=''; // removing the iframe is what actually stops YouTube playback — no API needed
 }
 function lbMove(d){lbIdx=(lbIdx+d+lbImgs.length)%lbImgs.length;lbRefresh();}
 function lbRefresh(){
   const url=lbImgs[lbIdx].url;
   const imgEl=document.getElementById('lb-img');
   const vidEl=document.getElementById('lb-video');
-  if(isVideoUrl(url)){
+  const ytEl=document.getElementById('lb-youtube');
+  const ytId=youtubeId(url);
+  document.getElementById('lb-yt-frame').innerHTML=''; // always tear down any live embed before switching items
+  if(ytId){
+    ytEl.style.display='block';
+    ytEl.dataset.ytId=ytId;
+    document.getElementById('lb-yt-poster').src=`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+    vidEl.pause(); vidEl.removeAttribute('src'); vidEl.load();
+    vidEl.style.display='none';
+    imgEl.style.display='none'; imgEl.removeAttribute('src');
+  } else if(isVideoUrl(url)){
+    ytEl.style.display='none';
     imgEl.style.display='none'; imgEl.removeAttribute('src');
     vidEl.style.display='block'; vidEl.src=url;
   } else {
+    ytEl.style.display='none';
     vidEl.pause(); vidEl.removeAttribute('src'); vidEl.load();
     vidEl.style.display='none';
     imgEl.style.display='block'; imgEl.src=url;
   }
   document.getElementById('lb-cap').textContent=`${lbIdx+1} / ${lbImgs.length}`;
+}
+function lbPlayYoutube(){
+  const ytEl=document.getElementById('lb-youtube');
+  const id=ytEl.dataset.ytId;
+  if(!id) return;
+  document.getElementById('lb-yt-frame').innerHTML=
+    `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" title="YouTube video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
 }
 function lbKey(e){if(e.key==='Escape')lbClose();if(e.key==='ArrowLeft')lbMove(-1);if(e.key==='ArrowRight')lbMove(1);}
 document.getElementById('lightbox').addEventListener('click',function(e){if(e.target===this)lbClose();});

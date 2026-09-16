@@ -643,10 +643,11 @@ img { display: block; max-width: 100%; }
 
       <div class="add-url-row">
         <div class="form-field" style="flex:1;margin:0">
-          <input type="text" id="url-in" placeholder="Or paste an image URL (https://...)">
+          <input type="text" id="url-in" placeholder="Or paste an image URL, or a YouTube link, (https://...)">
         </div>
         <button class="btn btn-white" style="flex-shrink:0" onclick="addUrl()">Add</button>
       </div>
+      <div class="hint" style="margin-top:-6px;margin-bottom:14px">For videos over 100MB (Cloudinary's free-plan cap), upload to YouTube as Unlisted and paste the link here instead.</div>
     </div>
     <div class="modal-ft">
       <button class="btn btn-white" onclick="closeModal()">Cancel</button>
@@ -951,9 +952,11 @@ function renderMImgs() {
   g.innerHTML=mImgs.map((img,i)=>`
     <div class="img-item-adm${draggable?'':' no-drag'}" ${draggable?'draggable="true"':''}
       ${draggable?`ondragstart="dStart(${i})" ondragover="dOver(event,${i})" ondrop="dDrop(event,${i})" ondragend="dEnd()"`:''}>
-      ${isVideoUrl(img.url)
-        ? `<video src="${img.url}" muted preload="metadata"></video><span class="video-badge-adm">&#9654;</span>`
-        : `<img src="${img.url}" alt="" onerror="this.parentElement.style.background='#f0f0f0'">`}
+      ${youtubeId(img.url)
+        ? `<img src="https://img.youtube.com/vi/${youtubeId(img.url)}/hqdefault.jpg" alt=""><span class="video-badge-adm">&#9654;</span>`
+        : isVideoUrl(img.url)
+          ? `<video src="${img.url}" muted preload="metadata"></video><span class="video-badge-adm">&#9654;</span>`
+          : `<img src="${img.url}" alt="" onerror="this.parentElement.style.background='#f0f0f0'">`}
       ${i===0?`<span class="cover-badge">Cover</span>`:''}
       <button class="rm-btn" onclick="rmImg(${i})">&#x2715;</button>
     </div>`).join('');
@@ -991,7 +994,7 @@ function updateSortModeUI(){
   if(!capBtn||!manBtn) return;
   capBtn.classList.toggle('active',albumSortMode==='capture');
   manBtn.classList.toggle('active',albumSortMode==='manual');
-  const photos=mImgs.filter(m=>!isVideoUrl(m.url)); // videos never carry a capture date, don't count them
+  const photos=mImgs.filter(m=>!isVideoUrl(m.url)&&!isYouTubeUrl(m.url)); // videos never carry a capture date, don't count them
   const withDates=photos.filter(m=>m.capturedAt).length;
   const hint=document.getElementById('sort-hint');
   if(!hint) return;
@@ -1003,11 +1006,18 @@ function updateSortModeUI(){
 function addUrl() {
   const v=document.getElementById('url-in').value.trim();
   if(!v||!v.startsWith('http')) return toast('Enter a valid URL starting with http',true);
+  const isYt=isYouTubeUrl(v);
   mImgs.push({url:v,capturedAt:null});
   if(albumSortMode==='capture') sortMImgsByCapture();
-  if(mImgs.length===1) document.getElementById('m-cover').value=v;
+  // Only auto-fill Cover from something actually displayable as an image —
+  // never a video, whether Cloudinary-hosted or a YouTube link (matches
+  // the same guard processFiles() already applies to uploaded files; this
+  // used to just check mImgs.length===1, which would've set a YouTube URL
+  // as the cover image if pasted first — fixed alongside this feature).
+  if(!isVideoUrl(v) && !isYt && !document.getElementById('m-cover').value.trim()) document.getElementById('m-cover').value=v;
   document.getElementById('url-in').value='';
   renderMImgs();
+  if(isYt) toast('YouTube video added');
 }
 function dzOver(e){e.preventDefault();document.getElementById('dz').classList.add('active-dz');}
 function dzLeave(){document.getElementById('dz').classList.remove('active-dz');}
@@ -1022,6 +1032,18 @@ function filesIn(inp){processFiles(Array.from(inp.files));inp.value='';}
    what uploadToCloudinary() below actually produces. isVideoUrl() itself
    still takes a plain URL string — callers pass img.url. */
 function isVideoUrl(url){ return typeof url==='string' && url.indexOf('/video/upload/')!==-1; }
+
+/* YouTube support — see the matching comment in assets/site.js for the
+   full rationale. Admin doesn't "upload" these at all: paste a YouTube
+   link into the same "paste a URL" field used for image URLs, and it's
+   auto-detected here by shape. Duplicated (not shared) since admin.html
+   is fully self-contained and doesn't load assets/site.js. */
+function youtubeId(url){
+  if(typeof url!=='string') return null;
+  const m=url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  return m?m[1]:null;
+}
+function isYouTubeUrl(url){ return !!youtubeId(url); }
 
 /* CLOUDINARY UPLOAD */
 const MAX_DIM = 2400;       // longest side in px — plenty for a full-screen lightbox, cuts most camera exports well under Cloudinary's per-file cap
@@ -1275,7 +1297,7 @@ function saveAlbum() {
   if(!title) return toast('Album title is required',true);
   const tags=document.getElementById('m-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
   const desc=document.getElementById('m-desc').value.trim();
-  const coverFallback=mImgs.find(m=>!isVideoUrl(m.url))||mImgs[0];
+  const coverFallback=mImgs.find(m=>!isVideoUrl(m.url)&&!isYouTubeUrl(m.url))||mImgs[0];
   const cover=document.getElementById('m-cover').value.trim()||(coverFallback?coverFallback.url:'');
   const eid=document.getElementById('edit-id').value;
   const data=getData();
