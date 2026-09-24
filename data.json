@@ -291,7 +291,6 @@
       ],
       "description": "Urban geometry, solitude in crowds, and the quiet poetry hidden in concrete streets.",
       "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938558/shots-and-stories/mheaxdknrifghmpmw2xe.jpg",
-      "sortMode": "manual",
       "images": [
         {
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228476/shots-and-stories/w11adjizo0yypeip69uu.jpg",
@@ -432,12 +431,9 @@
         {
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228491/shots-and-stories/trmv7rq5ht70xumkihcu.jpg",
           "capturedAt": null
-        },
-        {
-          "url": "https://www.youtube.com/watch?v=soXayQHSHo4",
-          "capturedAt": null
         }
-      ]
+      ],
+      "sortMode": "manual"
     },
     {
       "id": "a3",
@@ -2097,6 +2093,20 @@
         }
       ],
       "sortMode": "manual"
+    },
+    {
+      "id": "a1790263880892",
+      "title": "Pooja and Prabhakar",
+      "tags": [],
+      "description": "",
+      "cover": "https://www.youtube.com/watch?v=soXayQHSHo4",
+      "sortMode": "manual",
+      "images": [
+        {
+          "url": "https://www.youtube.com/watch?v=soXayQHSHo4",
+          "capturedAt": null
+        }
+      ]
     }
   ],
   "hero": [
