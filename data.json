@@ -6,7 +6,6 @@
       "tags": [],
       "description": "",
       "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938108/shots-and-stories/brs69yotw2jjzuwzmdoq.jpg",
-      "sortMode": "capture",
       "images": [
         {
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228166/shots-and-stories/dag1x1dedyflyimzqlum.jpg",
@@ -280,7 +279,8 @@
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228304/shots-and-stories/qwhyifpgbvcqxspchozu.jpg",
           "capturedAt": null
         }
-      ]
+      ],
+      "sortMode": "manual"
     },
     {
       "id": "a2",
@@ -444,7 +444,6 @@
       ],
       "description": "Reflections, stillness, and the meditative calm of nature's quieter moments by the lake.",
       "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938658/shots-and-stories/wugzcsl4ev076pz5dh1j.jpg",
-      "sortMode": "manual",
       "images": [
         {
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938658/shots-and-stories/wugzcsl4ev076pz5dh1j.jpg",
@@ -453,12 +452,9 @@
         {
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938658/shots-and-stories/rvy3qicrzdrpzkfjgpd2.jpg",
           "capturedAt": null
-        },
-        {
-          "url": "https://youtu.be/DDxt_ZTZ6js",
-          "capturedAt": null
         }
-      ]
+      ],
+      "sortMode": "manual"
     },
     {
       "id": "a1787248320882",
@@ -2093,6 +2089,70 @@
         }
       ],
       "sortMode": "manual"
+    },
+    {
+      "id": "a1790264328755",
+      "title": "Pooja and Prabhakar",
+      "tags": [
+        "Pooja and Prabhakar"
+      ],
+      "description": "Pooja and Prabhakar",
+      "cover": "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1400&q=80",
+      "sortMode": "manual",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790264296/shots-and-stories/m1err6iowbh6sywknb8b.jpg",
+          "capturedAt": null
+        },
+        {
+          "url": "https://www.youtube.com/watch?v=soXayQHSHo4",
+          "capturedAt": null
+        },
+        {
+          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790264296/shots-and-stories/s6diwmweq01tuwh3cqh6.jpg",
+          "capturedAt": null
+        },
+        {
+          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790264296/shots-and-stories/y8l4m95devo2rubx6p4v.jpg",
+          "capturedAt": null
+        },
+        {
+          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790264296/shots-and-stories/tzkrlumd39tizlpdblov.jpg",
+          "capturedAt": null
+        },
+        {
+          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790264297/shots-and-stories/plegxbjxwozysb5c1pst.jpg",
+          "capturedAt": null
+        },
+        {
+          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790264296/shots-and-stories/jpcijvfv9mieqjskxzzr.jpg",
+          "capturedAt": null
+        },
+        {
+          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790264297/shots-and-stories/kta9h6wngzitsme4emur.jpg",
+          "capturedAt": null
+        },
+        {
+          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790264297/shots-and-stories/p9mwlo0bbrule5posvav.jpg",
+          "capturedAt": null
+        },
+        {
+          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790264297/shots-and-stories/r45ghyoebzquvaaldhn4.jpg",
+          "capturedAt": null
+        },
+        {
+          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790264298/shots-and-stories/wjnj7vcpgrssx8j6r9in.jpg",
+          "capturedAt": null
+        },
+        {
+          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790264298/shots-and-stories/khzgaiphkubml8cipog0.jpg",
+          "capturedAt": null
+        },
+        {
+          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790264298/shots-and-stories/acszilciukldhfobnqs8.jpg",
+          "capturedAt": null
+        }
+      ]
     }
   ],
   "hero": [
