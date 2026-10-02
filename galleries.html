@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Galleries — Shots & Stories</title>
+<title>Photos — Shots & Stories</title>
 <link rel="icon" type="image/jpeg" href="assets/logo.jpg">
 <link rel="apple-touch-icon" href="assets/logo.jpg">
 <meta name="description" content="Browse photo galleries from Shots & Stories — portraits, landscapes, and street stories told in light.">
@@ -35,7 +35,8 @@
   <nav>
     <ul>
       <li><a href="./" class="nav-link">Home</a></li>
-      <li><a href="galleries" class="nav-link active">Galleries</a></li>
+      <li><a href="galleries" class="nav-link active">Photos</a></li>
+      <li><a href="films" class="nav-link">Films</a></li>
       <li><a href="./#section-about" class="nav-link">About</a></li>
       <li><a href="./#section-contact" class="nav-link">Contact</a></li>
     </ul>
@@ -50,7 +51,7 @@
 <div id="right-panel">
   <section id="section-galleries" class="section-wrap" style="padding-top:100px">
     <p class="section-label">Portfolio</p>
-    <h2 class="section-heading">Galleries</h2>
+    <h2 class="section-heading">Photos</h2>
     <div id="galleries-list"></div>
   </section>
 </div>
@@ -73,12 +74,16 @@
 
 <script src="assets/site.js"></script>
 <script>
-/* GALLERIES */
+/* PHOTOS — albumPhotos()/openAlbumLightbox() in site.js already filter out
+   any video/YouTube item mixed into an album (Films is its own section
+   now), so this page only ever needs the photo-only list for thumbs too. */
 function renderGalleries(){
   const data=getData(); const el=document.getElementById('galleries-list');
-  if(!data.albums.length){el.innerHTML=`<p style="color:#aaa">No albums yet.</p>`;return;}
-  el.innerHTML=data.albums.map(a=>{
-    const thumbs=[...a.images.slice(0,3)]; while(thumbs.length<3)thumbs.push('');
+  const albumsWithPhotos=data.albums.filter(a=>albumPhotos(a).length); // an album that's gone entirely to video (all items filtered) has nothing to show here
+  if(!albumsWithPhotos.length){el.innerHTML=`<p style="color:#aaa">No albums yet.</p>`;return;}
+  el.innerHTML=albumsWithPhotos.map(a=>{
+    const photos=albumPhotos(a);
+    const thumbs=[...photos.slice(0,3)]; while(thumbs.length<3)thumbs.push('');
     return `<div class="gallery-section">
       <div class="gallery-section-head">
         <div class="gshead-title" onclick="openAlbumLightbox('${a.id}',0)">${a.title}</div>
@@ -87,13 +92,7 @@ function renderGalleries(){
       </div>
       <div class="gallery-thumbs">${thumbs.map((img,i)=>{
         if(!img) return `<div class="gallery-thumb" onclick="openAlbumLightbox('${a.id}',0)"></div>`;
-        const ytId=youtubeId(img.url);
-        const media=ytId
-          ? `<img src="https://img.youtube.com/vi/${ytId}/hqdefault.jpg" loading="lazy" alt=""><span class="video-badge">&#9654;</span>`
-          : isVideoUrl(img.url)
-            ? `<video src="${img.url}" muted preload="metadata"></video><span class="video-badge">&#9654;</span>`
-            : `<img src="${img.url}" loading="lazy" alt="">`;
-        return `<div class="gallery-thumb" onclick="openAlbumLightbox('${a.id}',${i})">${media}</div>`;
+        return `<div class="gallery-thumb" onclick="openAlbumLightbox('${a.id}',${i})"><img src="${img.url}" loading="lazy" alt=""></div>`;
       }).join('')}</div>
       <button class="see-more-btn" onclick="openAlbumLightbox('${a.id}',0)">See More</button>
     </div>`;

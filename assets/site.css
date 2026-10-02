@@ -225,6 +225,15 @@ nav ul li a.active::after { width: 20px; }
 }
 .see-more-btn:hover { color: var(--orange); }
 
+/* ═══ FILMS ═══ */
+.films-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(320px,1fr)); gap: 36px; }
+.film-card { cursor: pointer; }
+.film-card-cover { aspect-ratio: 16/9; overflow: hidden; background: #eee; position: relative; }
+.film-card-cover img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94); }
+.film-card:hover .film-card-cover img { transform: scale(1.07); }
+.film-card-body { margin-top: 14px; }
+.film-card-body .gshead-title { display: block; }
+
 /* ═══ ABOUT ═══ */
 .about-grid { display: grid; grid-template-columns: 0.5fr 1fr; gap: 60px; align-items: start; }
 .about-img-wrap img { width: 100%; display: block; }

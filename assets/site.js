@@ -20,13 +20,15 @@ const DEFAULT_DATA = {
     { id:'h5', url:'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1600&q=85', label:'Serenity', title:'Open Horizons', albumId:null }
   ],
   about: { heading:'About Us', photo:'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&q=80', body:"Photography is a way of feeling, of touching, of loving. What you have caught on film is captured forever — it remembers little things, long after you have forgotten everything.\n\nI am based in Hyderabad, chasing light and stories across India and beyond. Every frame here is a short. Every album, a story worth telling.\n\nAvailable for portrait sessions, travel assignments, and creative collaborations.", awards:[] },
-  theme: { primary:'#D4501A', accent:'#2A7D6F', dark:'#1a1a1a', fontKey:'josefin', instagramEmbedCode:'' }
+  theme: { primary:'#D4501A', accent:'#2A7D6F', dark:'#1a1a1a', fontKey:'josefin', instagramEmbedCode:'' },
+  films: []
 };
 function getData(){
   try{
     const r=localStorage.getItem(DB_KEY);const d=r?JSON.parse(r):DEFAULT_DATA;
     if(!d.hero)d.hero=DEFAULT_DATA.hero;
     if(!d.theme)d.theme=DEFAULT_DATA.theme;
+    if(!d.films)d.films=[];
     if(d.about&&!d.about.awards)d.about.awards=[];
     // album.images migration — see the matching comment in admin.html's
     // getData(); both files must stay in sync on this.
@@ -122,6 +124,32 @@ function youtubeId(url){
 }
 function isYouTubeUrl(url){ return !!youtubeId(url); }
 
+/* FILMS — a dedicated, standalone content type (films.html) separate from
+   photo albums: {id, title, tags, description, cover, video}, one video per
+   entry rather than an images array. filmCover() resolves the thumbnail to
+   show when the admin left Cover blank: a YouTube link's own hqdefault
+   thumbnail, or — for a Cloudinary-hosted video — the frame Cloudinary
+   auto-generates when you request the same path with a .jpg extension
+   instead of the video's own. Falls back to '' (caller decides what to show)
+   only if neither applies, which shouldn't happen for a real video URL. */
+function filmCover(film){
+  if(film.cover) return film.cover;
+  const yt=youtubeId(film.video);
+  if(yt) return `https://img.youtube.com/vi/${yt}/hqdefault.jpg`;
+  if(isVideoUrl(film.video)) return film.video.replace(/\.[a-zA-Z0-9]+(\?.*)?$/,'.jpg');
+  return '';
+}
+
+/* Single-video lightbox, parallel to openAlbumLightbox() but for a film —
+   always exactly one item, so lbMove()'s left/right arrows are harmless
+   no-ops (mod-1 always resolves back to the same index) rather than
+   something that needs hiding. */
+function openFilmLightbox(filmId){
+  const data=getData(); const f=data.films.find(x=>x.id===filmId); if(!f) return;
+  lbImgs=[{url:f.video,capturedAt:null}];
+  lbOpen(0);
+}
+
 /* PANEL TOGGLE */
 let panelOpen=false;
 function togglePanel(){
@@ -148,9 +176,15 @@ function initPanelState(){
    openAlbumLightbox(), which points lbImgs at that album's images and
    opens lbOpen() at the given index. */
 let lbImgs=[], lbIdx=0;
+/* Albums are photos-only now that Films is its own section (see
+   openFilmLightbox below) — any video/YouTube item still mixed into an
+   older album's images (from before that split) is filtered out here
+   rather than requiring every existing album to be re-edited. */
+function albumPhotos(a){ return a.images.filter(img=>!isVideoUrl(img.url)&&!isYouTubeUrl(img.url)); }
 function openAlbumLightbox(albumId,idx){
-  const data=getData(); const a=data.albums.find(x=>x.id===albumId); if(!a||!a.images.length) return;
-  lbImgs=a.images;
+  const data=getData(); const a=data.albums.find(x=>x.id===albumId); if(!a) return;
+  const photos=albumPhotos(a); if(!photos.length) return;
+  lbImgs=photos;
   lbOpen(idx);
 }
 function lbOpen(i){lbIdx=i;document.getElementById('lightbox').classList.add('open');lbRefresh();document.addEventListener('keydown',lbKey);}

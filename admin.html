@@ -432,6 +432,7 @@ img { display: block; max-width: 100%; }
 
   <div class="adm-tabs">
     <button class="adm-tab active" onclick="switchTab('albums',this)">Albums</button>
+    <button class="adm-tab" onclick="switchTab('films',this)">Films</button>
     <button class="adm-tab" onclick="switchTab('hero',this)">Hero</button>
     <button class="adm-tab" onclick="switchTab('theme',this)">Theme</button>
     <button class="adm-tab" onclick="switchTab('about',this)">About</button>
@@ -447,6 +448,15 @@ img { display: block; max-width: 100%; }
         <button class="btn btn-black" onclick="openModal()">+ New Album</button>
       </div>
       <div class="alb-grid" id="alb-grid"></div>
+    </div>
+
+    <!-- FILMS -->
+    <div class="adm-section" id="tab-films">
+      <div class="sec-head">
+        <h3>Your Films</h3>
+        <button class="btn btn-black" onclick="openFilmModal()">+ New Film</button>
+      </div>
+      <div class="alb-grid" id="film-grid"></div>
     </div>
 
     <!-- HERO -->
@@ -623,7 +633,7 @@ img { display: block; max-width: 100%; }
       </div>
 
       <div class="imgs-header">
-        <h4>Images &amp; Videos</h4>
+        <h4>Images</h4>
         <div class="sort-toggle">
           <button type="button" id="sort-manual-btn" class="sort-toggle-btn active" onclick="setSortMode('manual')">Manual Order</button>
           <button type="button" id="sort-capture-btn" class="sort-toggle-btn" onclick="setSortMode('capture')">Capture Order</button>
@@ -635,23 +645,79 @@ img { display: block; max-width: 100%; }
       <div class="drop-zone" id="dz"
         onclick="document.getElementById('file-in').click()"
         ondragover="dzOver(event)" ondragleave="dzLeave()" ondrop="dzDrop(event)">
-        <input type="file" id="file-in" multiple accept="image/*,video/*" style="display:none" onchange="filesIn(this)">
-        &#128193; Drop photos or videos here or click to upload from device
+        <input type="file" id="file-in" multiple accept="image/*" style="display:none" onchange="filesIn(this)">
+        &#128193; Drop photos here or click to upload from device
       </div>
 
       <div class="upload-queue" id="upload-queue"></div>
 
       <div class="add-url-row">
         <div class="form-field" style="flex:1;margin:0">
-          <input type="text" id="url-in" placeholder="Or paste an image URL, or a YouTube link, (https://...)">
+          <input type="text" id="url-in" placeholder="Or paste an image URL (https://...)">
         </div>
         <button class="btn btn-white" style="flex-shrink:0" onclick="addUrl()">Add</button>
       </div>
-      <div class="hint" style="margin-top:8px;margin-bottom:14px">For videos over 100MB (Cloudinary's free-plan cap), upload to YouTube as Unlisted and paste the link here instead.</div>
+      <div class="hint" style="margin-top:8px;margin-bottom:14px">Have a video for this story? Add it from the <strong>Films</strong> tab instead — albums are photos only.</div>
     </div>
     <div class="modal-ft">
       <button class="btn btn-white" onclick="closeModal()">Cancel</button>
       <button class="btn btn-black" onclick="saveAlbum()">Save Album</button>
+    </div>
+  </div>
+</div>
+
+<!-- FILM MODAL -->
+<div class="modal-bg" id="film-modal">
+  <div class="modal">
+    <div class="modal-hd">
+      <h3 id="film-modal-ttl">New Film</h3>
+      <button class="mc" onclick="closeFilmModal()">&#x2715;</button>
+    </div>
+    <div class="modal-bd">
+      <input type="hidden" id="fm-edit-id">
+      <div class="form-row">
+        <div class="form-field">
+          <label>Film Title *</label>
+          <input type="text" id="fm-title" placeholder="e.g. Sharmada and Karthik">
+        </div>
+        <div class="form-field">
+          <label>Tags (comma separated)</label>
+          <input type="text" id="fm-tags" placeholder="e.g. South Indian Wedding, Bengaluru">
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Description</label>
+        <textarea id="fm-desc" placeholder="A short description..."></textarea>
+      </div>
+      <div class="form-field">
+        <label>Cover Image URL</label>
+        <input type="text" id="fm-cover" placeholder="https://...">
+        <div class="hint">Leave blank to auto-use the video's own thumbnail (YouTube's thumbnail, or the first frame for an uploaded video).</div>
+      </div>
+
+      <div class="imgs-header"><h4>Video</h4></div>
+      <div class="imgs-grid" id="fm-video-grid"></div>
+
+      <div class="drop-zone" id="fm-dz"
+        onclick="document.getElementById('fm-file-in').click()"
+        ondragover="fmDzOver(event)" ondragleave="fmDzLeave()" ondrop="fmDzDrop(event)">
+        <input type="file" id="fm-file-in" accept="video/*" style="display:none" onchange="fmFilesIn(this)">
+        &#128193; Drop a video here or click to upload from device
+      </div>
+
+      <div class="upload-queue" id="fm-upload-queue"></div>
+
+      <div class="add-url-row">
+        <div class="form-field" style="flex:1;margin:0">
+          <input type="text" id="fm-url-in" placeholder="Or paste a YouTube link, or a Cloudinary video URL (https://...)">
+        </div>
+        <button class="btn btn-white" style="flex-shrink:0" onclick="addFilmUrl()">Add</button>
+      </div>
+      <div class="hint" style="margin-top:8px;margin-bottom:14px">For videos over 100MB (Cloudinary's free-plan cap), upload to YouTube as Unlisted and paste the link here instead.</div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-white" onclick="closeFilmModal()">Cancel</button>
+      <button class="btn btn-black" onclick="saveFilm()">Save Film</button>
     </div>
   </div>
 </div>
@@ -703,7 +769,8 @@ const DEFAULT_DATA = {
     { id:'h5', url:'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1600&q=85', label:'Serenity', title:'Open Horizons', albumId:null }
   ],
   about: { heading:'About Us', photo:'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&q=80', body:'Photography is a way of feeling, of touching, of loving. What you have caught on film is captured forever.\n\nI am based in Bengaluru, chasing light and stories across India and beyond. Every frame here is a short. Every album, a story worth telling.', awards:[] },
-  theme: { primary:'#D4501A', accent:'#2A7D6F', dark:'#1a1a1a', fontKey:'josefin', instagramEmbedCode:'' }
+  theme: { primary:'#D4501A', accent:'#2A7D6F', dark:'#1a1a1a', fontKey:'josefin', instagramEmbedCode:'' },
+  films: []
 };
 
 /* Same curated catalog as assets/site.js — admin picks by key, not free
@@ -724,6 +791,7 @@ function getData() {
     const r=localStorage.getItem(DB_KEY); const d=r?JSON.parse(r):DEFAULT_DATA;
     if(!d.hero) d.hero=DEFAULT_DATA.hero;
     if(!d.theme) d.theme=DEFAULT_DATA.theme;
+    if(!d.films) d.films=[];
     if(d.about&&!d.about.awards) d.about.awards=[];
     // album.images used to be a flat url string[]; now each entry is
     // {url, capturedAt} so Capture Order sorting has something to sort by.
@@ -773,7 +841,7 @@ async function pullRemoteData(force){
 }
 async function doPullLatest(){
   const ok=await pullRemoteData(true);
-  if(ok){ renderAlbGrid(); loadAboutForm(); loadHeroTab(); loadThemeTab(); toast('Pulled latest published content'); }
+  if(ok){ renderAlbGrid(); renderFilmGrid(); loadAboutForm(); loadHeroTab(); loadThemeTab(); toast('Pulled latest published content'); }
   else toast('Nothing published yet, or the fetch failed',true);
 }
 
@@ -818,7 +886,7 @@ async function publishToGitHub(){
   }
 }
 function switchToSettingsAndFocusToken(){
-  switchTab('settings',document.querySelector('.adm-tab:nth-child(5)'));
+  switchTab('settings',document.querySelector('.adm-tab:nth-child(6)'));
   setTimeout(()=>document.getElementById('gh-token').focus(),50);
 }
 
@@ -874,6 +942,7 @@ function loadSettingsTab(){
 async function loadAdmin() {
   await pullRemoteData(false);
   renderAlbGrid();
+  renderFilmGrid();
   loadAboutForm();
   updatePublishStatus();
 }
@@ -1006,22 +1075,19 @@ function updateSortModeUI(){
 function addUrl() {
   const v=document.getElementById('url-in').value.trim();
   if(!v||!v.startsWith('http')) return toast('Enter a valid URL starting with http',true);
-  const isYt=isYouTubeUrl(v);
+  // Albums are photos-only now that Films is its own section — steer video
+  // links there instead of silently accepting a URL that'll never show up
+  // on the Photos page (see albumPhotos() in assets/site.js).
+  if(isVideoUrl(v)||isYouTubeUrl(v)) return toast('That\'s a video link — add it from the Films tab instead',true);
   mImgs.push({url:v,capturedAt:null});
   if(albumSortMode==='capture') sortMImgsByCapture();
-  // Only auto-fill Cover from something actually displayable as an image —
-  // never a video, whether Cloudinary-hosted or a YouTube link (matches
-  // the same guard processFiles() already applies to uploaded files; this
-  // used to just check mImgs.length===1, which would've set a YouTube URL
-  // as the cover image if pasted first — fixed alongside this feature).
-  if(!isVideoUrl(v) && !isYt && !document.getElementById('m-cover').value.trim()) document.getElementById('m-cover').value=v;
+  if(!document.getElementById('m-cover').value.trim()) document.getElementById('m-cover').value=v;
   document.getElementById('url-in').value='';
   renderMImgs();
-  if(isYt) toast('YouTube video added');
 }
 function dzOver(e){e.preventDefault();document.getElementById('dz').classList.add('active-dz');}
 function dzLeave(){document.getElementById('dz').classList.remove('active-dz');}
-function dzDrop(e){e.preventDefault();dzLeave();processFiles(Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')||f.type.startsWith('video/')));}
+function dzDrop(e){e.preventDefault();dzLeave();processFiles(Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')));}
 function filesIn(inp){processFiles(Array.from(inp.files));inp.value='';}
 
 /* Photos and videos share the same album.images array — each entry is
@@ -1130,42 +1196,29 @@ function readCaptureDate(file){
   return file.slice(0,131072).arrayBuffer().then(parseExifCaptureDate).catch(()=>null);
 }
 
+/* Albums take photos only — video belongs in the Films tab (processFilmFiles
+   below) now that Films is its own section with its own 100MB-cap handling. */
 function processFiles(files){
   files.forEach(f=>{
-    const isImg=f.type.startsWith('image/');
-    const isVid=f.type.startsWith('video/');
-    if(!isImg && !isVid){ toast(f.name+' is not an image or video',true); return; }
-    if(isVid && f.size > MAX_VIDEO_MB*1024*1024){
-      toast(`${f.name} is ${(f.size/1024/1024).toFixed(0)}MB — over Cloudinary's ${MAX_VIDEO_MB}MB free-plan video cap. Compress it smaller (e.g. with HandBrake or ffmpeg) and try again.`,true);
-      return;
-    }
+    if(!f.type.startsWith('image/')){ toast(f.name+' is not an image — add videos from the Films tab instead',true); return; }
     const itemId='up'+Date.now()+Math.random().toString(36).slice(2,7);
     addQueueItem(itemId,f.name,'upload-queue',f.size);
     const onDone=(url,capturedAt)=>{
       mImgs.push({url,capturedAt:capturedAt||null});
-      // only auto-fill Cover from a photo, never a video, and only if it's still empty
-      if(!isVideoUrl(url) && !document.getElementById('m-cover').value.trim()) document.getElementById('m-cover').value=url;
+      if(!document.getElementById('m-cover').value.trim()) document.getElementById('m-cover').value=url;
       // if this album is in Capture Order mode, keep it correctly ordered
       // as each upload lands rather than making the admin re-click it
       if(albumSortMode==='capture') sortMImgsByCapture();
       renderMImgs();
     };
-    if(isVid){
-      // no client-side compression for video — canvas can't touch it, and
-      // there's no lightweight in-browser transcoder worth adding here.
-      // Cloudinary's own error (size cap, format, etc.) surfaces as-is via uploadFailed.
-      // Videos never carry a usable capturedAt for our purposes — null.
-      uploadToCloudinary(f,itemId,f.name,(url)=>onDone(url,null),'video');
-    } else {
-      // Read EXIF from the ORIGINAL file before resizeImage() re-encodes it
-      // through a canvas — canvas.toBlob() output carries no EXIF at all,
-      // so this has to happen first or the capture date is gone for good.
-      readCaptureDate(f).then(capturedAt=>{
-        resizeImage(f,itemId)
-          .then(blob=>uploadToCloudinary(blob,itemId,f.name,(url)=>onDone(url,capturedAt),'image'))
-          .catch(()=>uploadToCloudinary(f,itemId,f.name,(url)=>onDone(url,capturedAt),'image')); // resize failed (odd format, etc.) — fall back to the original file
-      });
-    }
+    // Read EXIF from the ORIGINAL file before resizeImage() re-encodes it
+    // through a canvas — canvas.toBlob() output carries no EXIF at all,
+    // so this has to happen first or the capture date is gone for good.
+    readCaptureDate(f).then(capturedAt=>{
+      resizeImage(f,itemId)
+        .then(blob=>uploadToCloudinary(blob,itemId,f.name,(url)=>onDone(url,capturedAt),'image'))
+        .catch(()=>uploadToCloudinary(f,itemId,f.name,(url)=>onDone(url,capturedAt),'image')); // resize failed (odd format, etc.) — fall back to the original file
+    });
   });
 }
 
@@ -1319,6 +1372,152 @@ function deleteAlbum(id) {
   saveData(data);
   renderAlbGrid();
   toast('Album deleted');
+}
+
+/* FILMS — a standalone content type (films.html), separate from photo
+   albums: {id, title, tags, description, cover, video}, one video per
+   entry rather than an images array. Reuses the same upload pipeline,
+   youtubeId()/isVideoUrl() detection, and .alb-grid/.alb-card styling as
+   Albums, since the mechanics (and the card layout) are otherwise identical. */
+function filmCover(film){
+  if(film.cover) return film.cover;
+  const yt=youtubeId(film.video);
+  if(yt) return `https://img.youtube.com/vi/${yt}/hqdefault.jpg`;
+  if(isVideoUrl(film.video)) return film.video.replace(/\.[a-zA-Z0-9]+(\?.*)?$/,'.jpg');
+  return '';
+}
+
+function renderFilmGrid() {
+  const data=getData();
+  const g=document.getElementById('film-grid');
+  g.innerHTML = data.films.map(f=>{
+    const cover=filmCover(f);
+    return `
+    <div class="alb-card">
+      <div class="alb-card-cover" onclick="editFilm('${f.id}')">
+        ${cover?`<img src="${cover}" alt="">`:`<div class="no-cover">&#127909;</div>`}
+        <div class="edit-overlay">Click to Edit</div>
+      </div>
+      <div class="alb-card-body">
+        <h4>${f.title}</h4>
+        <div class="atags">${f.tags.join(' &middot; ')}</div>
+        <div class="acount">${f.video?'1 video':'No video yet'}</div>
+        <div class="alb-card-actions">
+          <button class="btn btn-white" onclick="editFilm('${f.id}')">Edit</button>
+          <button class="btn btn-red" onclick="confirmAction('Delete film &ldquo;${f.title}&rdquo;? This cannot be undone.',()=>deleteFilm('${f.id}'))">Delete</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('') + `
+    <div class="add-new-card" onclick="openFilmModal()">
+      <div class="plus">&#43;</div>
+      <span>New Film</span>
+    </div>`;
+}
+
+let fmVideoUrl='';
+
+function openFilmModal() {
+  fmVideoUrl='';
+  document.getElementById('fm-edit-id').value='';
+  document.getElementById('film-modal-ttl').textContent='New Film';
+  ['fm-title','fm-tags','fm-desc','fm-cover','fm-url-in'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fm-upload-queue').innerHTML='';
+  renderFmVideo();
+  document.getElementById('film-modal').classList.add('open');
+}
+function editFilm(id) {
+  const f=getData().films.find(x=>x.id===id);
+  if(!f) return;
+  fmVideoUrl=f.video||'';
+  document.getElementById('fm-edit-id').value=id;
+  document.getElementById('film-modal-ttl').textContent='Edit Film';
+  document.getElementById('fm-title').value=f.title;
+  document.getElementById('fm-tags').value=f.tags.join(', ');
+  document.getElementById('fm-desc').value=f.description;
+  document.getElementById('fm-cover').value=f.cover||'';
+  document.getElementById('fm-url-in').value='';
+  document.getElementById('fm-upload-queue').innerHTML='';
+  renderFmVideo();
+  document.getElementById('film-modal').classList.add('open');
+}
+function closeFilmModal() {
+  document.getElementById('film-modal').classList.remove('open');
+  fmVideoUrl='';
+  document.getElementById('fm-upload-queue').innerHTML='';
+}
+
+function renderFmVideo() {
+  const g=document.getElementById('fm-video-grid');
+  if(!fmVideoUrl) {
+    g.innerHTML=`<div style="grid-column:1/-1;font-size:11px;color:#bbb;letter-spacing:2px;padding:6px 0;text-transform:uppercase">No video yet</div>`;
+    return;
+  }
+  const ytId=youtubeId(fmVideoUrl);
+  g.innerHTML=`
+    <div class="img-item-adm no-drag">
+      ${ytId
+        ? `<img src="https://img.youtube.com/vi/${ytId}/hqdefault.jpg" alt=""><span class="video-badge-adm">&#9654;</span>`
+        : `<video src="${fmVideoUrl}" muted preload="metadata"></video><span class="video-badge-adm">&#9654;</span>`}
+      <button class="rm-btn" onclick="removeFilmVideo()">&#x2715;</button>
+    </div>`;
+}
+function removeFilmVideo(){ fmVideoUrl=''; renderFmVideo(); }
+
+function addFilmUrl() {
+  const v=document.getElementById('fm-url-in').value.trim();
+  if(!v||!v.startsWith('http')) return toast('Enter a valid URL starting with http',true);
+  if(!isVideoUrl(v) && !isYouTubeUrl(v)) return toast('That doesn\'t look like a video URL or YouTube link',true);
+  fmVideoUrl=v;
+  document.getElementById('fm-url-in').value='';
+  renderFmVideo();
+}
+
+function fmDzOver(e){e.preventDefault();document.getElementById('fm-dz').classList.add('active-dz');}
+function fmDzLeave(){document.getElementById('fm-dz').classList.remove('active-dz');}
+function fmDzDrop(e){e.preventDefault();fmDzLeave();processFilmFiles(Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('video/')));}
+function fmFilesIn(inp){processFilmFiles(Array.from(inp.files));inp.value='';}
+
+function processFilmFiles(files){
+  const f=files[0]; // one video per film
+  if(!f) return;
+  if(!f.type.startsWith('video/')){ toast(f.name+' is not a video',true); return; }
+  if(f.size > MAX_VIDEO_MB*1024*1024){
+    toast(`${f.name} is ${(f.size/1024/1024).toFixed(0)}MB — over Cloudinary's ${MAX_VIDEO_MB}MB free-plan video cap. Compress it smaller (e.g. with HandBrake or ffmpeg), or upload to YouTube as Unlisted and paste the link instead.`,true);
+    return;
+  }
+  const itemId='up'+Date.now()+Math.random().toString(36).slice(2,7);
+  addQueueItem(itemId,f.name,'fm-upload-queue',f.size);
+  uploadToCloudinary(f,itemId,f.name,(url)=>{ fmVideoUrl=url; renderFmVideo(); },'video');
+}
+
+function saveFilm() {
+  const title=document.getElementById('fm-title').value.trim();
+  if(!title) return toast('Film title is required',true);
+  if(!fmVideoUrl) return toast('Add a video (upload or paste a link) first',true);
+  const tags=document.getElementById('fm-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const desc=document.getElementById('fm-desc').value.trim();
+  const cover=document.getElementById('fm-cover').value.trim();
+  const eid=document.getElementById('fm-edit-id').value;
+  const data=getData();
+  if(eid){
+    const idx=data.films.findIndex(f=>f.id===eid);
+    if(idx>-1) data.films[idx]={id:eid,title,tags,description:desc,cover,video:fmVideoUrl};
+  } else {
+    data.films.push({id:'f'+Date.now(),title,tags,description:desc,cover,video:fmVideoUrl});
+  }
+  saveData(data);
+  closeFilmModal();
+  renderFilmGrid();
+  toast(eid?'Film updated!':'Film created!');
+}
+
+function deleteFilm(id) {
+  const data=getData();
+  data.films=data.films.filter(f=>f.id!==id);
+  saveData(data);
+  renderFilmGrid();
+  toast('Film deleted');
 }
 
 /* HERO */
@@ -1507,8 +1706,8 @@ function rmAward(i){ awardsList.splice(i,1); renderAwardsAdm(); }
 
 /* EXPORT / IMPORT / RESET */
 function exportData(){const b=new Blob([JSON.stringify(getData(),null,2)],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='sns-backup.json';a.click();URL.revokeObjectURL(u);toast('Backup downloaded');}
-function importData(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const p=JSON.parse(e.target.result);if(!p.albums)throw new Error();confirmAction('Import this backup? Current data will be overwritten.',()=>{saveData(p);renderAlbGrid();loadAboutForm();toast('Data imported!');});}catch{toast('Invalid backup file',true);}};r.readAsText(f);inp.value='';}
-function doReset(){localStorage.removeItem(DB_KEY);renderAlbGrid();loadAboutForm();loadHeroTab();loadThemeTab();toast('Reset to defaults');}
+function importData(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const p=JSON.parse(e.target.result);if(!p.albums)throw new Error();confirmAction('Import this backup? Current data will be overwritten.',()=>{saveData(p);renderAlbGrid();renderFilmGrid();loadAboutForm();toast('Data imported!');});}catch{toast('Invalid backup file',true);}};r.readAsText(f);inp.value='';}
+function doReset(){localStorage.removeItem(DB_KEY);renderAlbGrid();renderFilmGrid();loadAboutForm();loadHeroTab();loadThemeTab();toast('Reset to defaults');}
 
 /* CONFIRM */
 function confirmAction(msg,cb){

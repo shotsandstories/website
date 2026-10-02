@@ -1377,10 +1377,6 @@
         {
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790408477/shots-and-stories/rseyvlguzs2ubhpjtat2.jpg",
           "capturedAt": "2024-11-13T17:52:15"
-        },
-        {
-          "url": "https://youtu.be/0oi4U_xynHQ",
-          "capturedAt": null
         }
       ]
     },
@@ -2249,10 +2245,6 @@
         {
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790409321/shots-and-stories/euwnbvm49i0me3z3bbot.jpg",
           "capturedAt": "2024-04-15T13:10:17"
-        },
-        {
-          "url": "https://youtu.be/PHKRVyu8rWg",
-          "capturedAt": null
         }
       ]
     },
@@ -3661,10 +3653,6 @@
         {
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790409757/shots-and-stories/qzzmbjitkwidkw5dgvx0.jpg",
           "capturedAt": "2024-11-25T13:04:10"
-        },
-        {
-          "url": "https://youtu.be/soXayQHSHo4",
-          "capturedAt": null
         }
       ]
     }
@@ -3731,5 +3719,37 @@
     "dark": "#1a1a1a",
     "fontKey": "josefin",
     "instagramEmbedCode": ""
-  }
+  },
+  "films": [
+    {
+      "id": "f1790930760269",
+      "title": "Sharmada and Karthik",
+      "tags": [
+        "South indian wedding at The Balan Farm - Bengaluru"
+      ],
+      "description": "",
+      "cover": "",
+      "video": "https://youtu.be/0oi4U_xynHQ"
+    },
+    {
+      "id": "f1790930760270",
+      "title": "Aarthi and Punith",
+      "tags": [
+        "Fun filled Tamil Wedding at The Peacock Grove - Bengaluru"
+      ],
+      "description": "",
+      "cover": "",
+      "video": "https://youtu.be/PHKRVyu8rWg"
+    },
+    {
+      "id": "f1790930760271",
+      "title": "Pooja and Prabhakar",
+      "tags": [
+        "2 States Wedding at La Roma Gardenia"
+      ],
+      "description": "**Some love stories cross paths. This one crossed borders.** ✈️\n\nFrom office corridors in Bengaluru to life in London & Frankfurt, their journey finally came full circle at **Le Roma Gardenia**.\n\n**Two states. Two cities. One forever.**",
+      "cover": "",
+      "video": "https://youtu.be/soXayQHSHo4"
+    }
+  ]
 }
