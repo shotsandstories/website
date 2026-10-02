@@ -18,7 +18,7 @@ ul { list-style: none; }
 /* ═══ HAMBURGER ═══ */
 #ham-btn {
   position: fixed; top: 24px; left: 24px; z-index: 500;
-  width: 44px; height: 44px;
+  width: 36px; height: 36px;
   background: rgba(26,26,26,0.88); backdrop-filter: blur(8px);
   border: 1px solid rgba(255,255,255,0.1); border-radius: 2px;
   cursor: pointer; display: flex; flex-direction: column;
@@ -38,7 +38,8 @@ ul { list-style: none; }
 /* ═══ LEFT PANEL ═══ */
 #left-panel {
   position: fixed; top: 0; left: 0; width: 260px; height: 100vh;
-  background: rgba(20, 20, 20, 0.72);
+  /* background: rgba(20, 20, 20, 0.72); */
+  background: rgba(0, 0, 0, 0.72);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border-right: 1px solid rgba(255,255,255,0.06);
@@ -184,7 +185,7 @@ nav ul li a.active::after { width: 20px; }
 @keyframes scrollBounce { 0%,100%{ transform:translateX(-50%) translateY(0);} 50%{transform:translateX(-50%) translateY(6px);} }
 
 /* ═══ SECTION SHARED ═══ */
-.section-wrap { padding: 72px 64px 84px; }
+.section-wrap { padding: 72px 72px 84px; }
 .section-wrap.alt { background: #f9f9f9; }
 .section-label {
   font-family: var(--font-main);
