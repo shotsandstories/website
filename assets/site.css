@@ -13,7 +13,13 @@ ul { list-style: none; }
   --dark:   #1a1a1a;
   --light:  #f9f9f9;
   --font-main: 'Josefin Sans', sans-serif;
+  --font-heading: 'The Seasons', serif;
 }
+
+/* Display font for headings — overrides --font-main (and the admin
+   Theme tab's font picker) specifically for these selectors, since
+   The Seasons is a fixed heading face, not a body-text option. */
+h1 { font-family: var(--font-heading); }
 
 /* ═══ HAMBURGER ═══ */
 #ham-btn {
@@ -128,7 +134,7 @@ nav ul li a.active::after { width: 20px; }
   transition: transform 0.8s 0.3s ease, opacity 0.8s 0.3s ease;
 }
 .hero-slide-title {
-  font-family: var(--font-main);
+  font-family: var(--font-heading);
   font-size: clamp(36px, 5vw, 68px); font-weight: 700;
   color: #fff; line-height: 1.0; margin-bottom: 16px;
   letter-spacing: 3px; text-transform: uppercase;
@@ -192,7 +198,7 @@ nav ul li a.active::after { width: 20px; }
   font-size: 10px; letter-spacing: 5px; text-transform: uppercase; color: var(--teal); margin-bottom: 6px;
 }
 .section-heading {
-  font-family: var(--font-main); font-weight: 700;
+  font-family: var(--font-heading); font-weight: 700;
   font-size: 28px; letter-spacing: 3px; text-transform: uppercase; color: var(--dark);
   padding-bottom: 22px; margin-bottom: 44px; border-bottom: 1px solid #eee;
 }
@@ -201,7 +207,7 @@ nav ul li a.active::after { width: 20px; }
 .gallery-section { margin-bottom: 70px; }
 .gallery-section-head { margin-bottom: 18px; }
 .gshead-title {
-  font-family: var(--font-main); font-weight: 600;
+  font-family: var(--font-heading); font-weight: 600;
   font-size: 22px; letter-spacing: 2px; text-transform: uppercase; color: var(--dark);
   margin-bottom: 5px; cursor: pointer; display: inline-block; transition: color 0.2s;
 }
