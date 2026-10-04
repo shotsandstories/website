@@ -150,6 +150,16 @@ function openFilmLightbox(filmId){
   lbOpen(0);
 }
 
+/* Cloudinary serves a resized/recompressed copy when a transform segment is
+   inserted after /image/upload/ — used for thumbnails and masonry tiles so a
+   349-photo album doesn't pull 349 full-size (up to 2400px) originals just to
+   draw small tiles. The full-size URL is still what the lightbox shows.
+   Non-Cloudinary URLs (and anything already transformed) pass through. */
+function thumbUrl(url,w){
+  if(typeof url!=='string' || url.indexOf('/image/upload/v')===-1) return url;
+  return url.replace('/image/upload/','/image/upload/w_'+(w||600)+',q_auto,f_auto/');
+}
+
 /* PANEL TOGGLE */
 let panelOpen=false;
 function togglePanel(){

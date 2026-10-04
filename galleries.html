@@ -56,6 +56,18 @@
   </section>
 </div>
 
+<!-- MASONRY OVERLAY — all photos of one album; clicking a tile opens the lightbox on top -->
+<div id="masonry">
+  <div class="masonry-head">
+    <div>
+      <div class="masonry-title" id="masonry-title"></div>
+      <div class="masonry-count" id="masonry-count"></div>
+    </div>
+    <button class="masonry-close" onclick="closeMasonry()" aria-label="Close">&#x2715;</button>
+  </div>
+  <div class="masonry-grid" id="masonry-grid"></div>
+</div>
+
 <!-- LIGHTBOX -->
 <div id="lightbox">
   <button class="lb-close" onclick="lbClose()">&#x2715;</button>
@@ -74,6 +86,36 @@
 
 <script src="assets/site.js"></script>
 <script>
+/* MASONRY — title / See More open a full-screen overlay with every photo in
+   the album (CSS multi-column layout, so tiles keep their natural aspect
+   ratio). Clicking a tile calls openAlbumLightbox(id, idx) — the lightbox
+   (z-index above the overlay) shows that photo full screen, and closing it
+   drops you back on the masonry view. Tiles use Cloudinary-resized copies
+   (thumbUrl) and lazy-load; the lightbox loads the full-size original. */
+let masonryOpen=false;
+function openMasonry(albumId){
+  const a=getData().albums.find(x=>x.id===albumId); if(!a) return;
+  const photos=albumPhotos(a); if(!photos.length) return;
+  document.getElementById('masonry-title').textContent=a.title;
+  document.getElementById('masonry-count').textContent=photos.length+' photo'+(photos.length!==1?'s':'');
+  document.getElementById('masonry-grid').innerHTML=photos.map((p,i)=>
+    `<div class="masonry-tile" onclick="openAlbumLightbox('${a.id}',${i})"><img src="${thumbUrl(p.url,600)}" loading="lazy" alt=""></div>`).join('');
+  const m=document.getElementById('masonry');
+  m.classList.add('open'); m.scrollTop=0;
+  document.body.style.overflow='hidden';
+  masonryOpen=true;
+}
+function closeMasonry(){
+  document.getElementById('masonry').classList.remove('open');
+  document.body.style.overflow='';
+  masonryOpen=false;
+}
+document.addEventListener('keydown',e=>{
+  // Escape closes the lightbox first (lbKey handles that); only close the
+  // masonry once the lightbox is already gone.
+  if(e.key==='Escape' && masonryOpen && !document.getElementById('lightbox').classList.contains('open')) closeMasonry();
+});
+
 /* PHOTOS — albumPhotos()/openAlbumLightbox() in site.js already filter out
    any video/YouTube item mixed into an album (Films is its own section
    now), so this page only ever needs the photo-only list for thumbs too. */
@@ -86,15 +128,15 @@ function renderGalleries(){
     const thumbs=[...photos.slice(0,3)]; while(thumbs.length<3)thumbs.push('');
     return `<div class="gallery-section">
       <div class="gallery-section-head">
-        <div class="gshead-title" onclick="openAlbumLightbox('${a.id}',0)">${a.title}</div>
+        <div class="gshead-title" onclick="openMasonry('${a.id}')">${a.title}</div>
         <div class="gshead-cats">${a.tags.map((t,i)=>i===0?t:`<span class="sep">/</span>${t}`).join('')}</div>
         ${a.description?`<div class="gshead-desc">${a.description}</div>`:''}
       </div>
       <div class="gallery-thumbs">${thumbs.map((img,i)=>{
-        if(!img) return `<div class="gallery-thumb" onclick="openAlbumLightbox('${a.id}',0)"></div>`;
-        return `<div class="gallery-thumb" onclick="openAlbumLightbox('${a.id}',${i})"><img src="${img.url}" loading="lazy" alt=""></div>`;
+        if(!img) return `<div class="gallery-thumb" onclick="openMasonry('${a.id}')"></div>`;
+        return `<div class="gallery-thumb" onclick="openAlbumLightbox('${a.id}',${i})"><img src="${thumbUrl(img.url,800)}" loading="lazy" alt=""></div>`;
       }).join('')}</div>
-      <button class="see-more-btn" onclick="openAlbumLightbox('${a.id}',0)">See More</button>
+      <button class="see-more-btn" onclick="openMasonry('${a.id}')">See More</button>
     </div>`;
   }).join('');
 }
