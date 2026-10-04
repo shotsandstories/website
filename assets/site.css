@@ -253,12 +253,18 @@ nav ul li a.active::after { width: 20px; }
 .masonry-count { font-family: var(--font-main); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--teal); margin-top: 4px; }
 .masonry-close { background: none; border: none; font-size: 26px; color: #888; cursor: pointer; padding: 4px 8px; transition: color 0.2s; }
 .masonry-close:hover { color: var(--orange); }
-.masonry-grid { column-count: 4; column-gap: 8px; padding: 24px 40px 60px; }
-.masonry-tile { break-inside: avoid; margin-bottom: 8px; cursor: pointer; overflow: hidden; background: #eee; }
-.masonry-tile img { width: 100%; display: block; transition: transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94); }
+/* Justified rows, not CSS columns: columns fill top-to-bottom, which scrambles
+   a capture-ordered album's left-to-right reading order. Here tiles flow in
+   strict album order, row by row. Each tile's --r is its photo's width/height
+   (set on load; 1.5 until then), and flex: r 1 r*row-h gives every tile in a
+   row the same height with no cropping. The ::after spacer soaks up the
+   leftover space so the last row doesn't stretch to full width. */
+.masonry-grid { --row-h: 240px; display: flex; flex-wrap: wrap; gap: 8px; padding: 24px 40px 60px; }
+.masonry-grid::after { content: ''; flex-grow: 100000; }
+.masonry-tile { --r: 1.5; aspect-ratio: var(--r); /* reserves height before the image loads, so lazy-loading still works */ flex: var(--r) 1 calc(var(--r) * var(--row-h)); min-width: 0; cursor: pointer; overflow: hidden; background: #eee; }
+.masonry-tile img { width: 100%; height: auto; display: block; transition: transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94); }
 .masonry-tile:hover img { transform: scale(1.04); }
-@media (max-width: 1200px) { .masonry-grid { column-count: 3; } }
-@media (max-width: 800px)  { .masonry-grid { column-count: 2; padding: 16px 16px 40px; } .masonry-head { padding: 14px 16px; } }
+@media (max-width: 800px)  { .masonry-grid { --row-h: 130px; gap: 4px; padding: 16px 16px 40px; } .masonry-head { padding: 14px 16px; } }
 
 /* ═══ ABOUT ═══ */
 .about-grid { display: grid; grid-template-columns: 0.5fr 1fr; gap: 60px; align-items: start; }

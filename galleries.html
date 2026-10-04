@@ -99,7 +99,7 @@ function openMasonry(albumId){
   document.getElementById('masonry-title').textContent=a.title;
   document.getElementById('masonry-count').textContent=photos.length+' photo'+(photos.length!==1?'s':'');
   document.getElementById('masonry-grid').innerHTML=photos.map((p,i)=>
-    `<div class="masonry-tile" onclick="openAlbumLightbox('${a.id}',${i})"><img src="${thumbUrl(p.url,600)}" loading="lazy" alt=""></div>`).join('');
+    `<div class="masonry-tile" onclick="openAlbumLightbox('${a.id}',${i})"><img src="${thumbUrl(p.url,600)}" loading="lazy" alt="" onload="this.parentElement.style.setProperty('--r',this.naturalWidth/this.naturalHeight)"></div>`).join('');
   const m=document.getElementById('masonry');
   m.classList.add('open'); m.scrollTop=0;
   document.body.style.overflow='hidden';
