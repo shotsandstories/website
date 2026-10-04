@@ -259,12 +259,12 @@ nav ul li a.active::after { width: 20px; }
    (set on load; 1.5 until then), and flex: r 1 r*row-h gives every tile in a
    row the same height with no cropping. The ::after spacer soaks up the
    leftover space so the last row doesn't stretch to full width. */
-.masonry-grid { --row-h: 240px; display: flex; flex-wrap: wrap; gap: 8px; padding: 24px 40px 60px; }
-.masonry-grid::after { content: ''; flex-grow: 100000; }
-.masonry-tile { --r: 1.5; aspect-ratio: var(--r); /* reserves height before the image loads, so lazy-loading still works */ flex: var(--r) 1 calc(var(--r) * var(--row-h)); min-width: 0; cursor: pointer; overflow: hidden; background: #eee; }
+.masonry-grid { padding: 24px 40px 60px; }
+.masonry-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.masonry-tile { --r: 1.5; aspect-ratio: var(--r); /* reserves height before the image loads, so lazy-loading still works */ flex: var(--r) 1 0; min-width: 0; cursor: pointer; overflow: hidden; background: #eee; }
 .masonry-tile img { width: 100%; height: auto; display: block; transition: transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94); }
 .masonry-tile:hover img { transform: scale(1.04); }
-@media (max-width: 800px)  { .masonry-grid { --row-h: 130px; gap: 4px; padding: 16px 16px 40px; } .masonry-head { padding: 14px 16px; } }
+@media (max-width: 800px)  { .masonry-grid { padding: 16px 16px 40px; } .masonry-row { gap: 4px; margin-bottom: 4px; } .masonry-head { padding: 14px 16px; } }
 
 /* ═══ ABOUT ═══ */
 .about-grid { display: grid; grid-template-columns: 0.5fr 1fr; gap: 60px; align-items: start; }

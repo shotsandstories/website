@@ -98,8 +98,20 @@ function openMasonry(albumId){
   const photos=albumPhotos(a); if(!photos.length) return;
   document.getElementById('masonry-title').textContent=a.title;
   document.getElementById('masonry-count').textContent=photos.length+' photo'+(photos.length!==1?'s':'');
-  document.getElementById('masonry-grid').innerHTML=photos.map((p,i)=>
-    `<div class="masonry-tile" onclick="openAlbumLightbox('${a.id}',${i})"><img src="${thumbUrl(p.url,600)}" loading="lazy" alt="" onload="this.parentElement.style.setProperty('--r',this.naturalWidth/this.naturalHeight)"></div>`).join('');
+  // Exactly N photos per row (3 on desktop, 2 on phones), in album order.
+  // Each row is its own flex container, so a row's tiles share one height
+  // (widths proportional to each photo's ratio — see .masonry-tile in
+  // site.css). An incomplete last row is narrowed to n/N of the width so a
+  // lone photo doesn't blow up to full width.
+  const per=window.innerWidth<=800?2:3;
+  let html='';
+  for(let s=0;s<photos.length;s+=per){
+    const row=photos.slice(s,s+per);
+    const w=row.length<per?` style="width:calc(${row.length}/${per}*100%)"`:'';
+    html+=`<div class="masonry-row"${w}>`+row.map((p,j)=>
+      `<div class="masonry-tile" onclick="openAlbumLightbox('${a.id}',${s+j})"><img src="${thumbUrl(p.url,900)}" loading="lazy" alt="" onload="this.parentElement.style.setProperty('--r',this.naturalWidth/this.naturalHeight)"></div>`).join('')+`</div>`;
+  }
+  document.getElementById('masonry-grid').innerHTML=html;
   const m=document.getElementById('masonry');
   m.classList.add('open'); m.scrollTop=0;
   document.body.style.overflow='hidden';
