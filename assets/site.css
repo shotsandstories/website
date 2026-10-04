@@ -215,9 +215,14 @@ nav ul li a.active::after { width: 20px; }
 .gshead-cats { font-family: var(--font-main); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--teal); }
 .gshead-cats .sep { margin: 0 8px; opacity: 0.4; }
 .gshead-desc { font-family: var(--font-main); font-size: 13px; font-weight: 300; line-height: 1.7; color: #888; max-width: 640px; margin-top: 8px; }
-.gallery-thumbs { display: grid; grid-template-columns: repeat(5,1fr); gap: 4px; margin-bottom: 12px; }
-.gallery-thumb { aspect-ratio: 4/3; overflow: hidden; cursor: pointer; background: #eee; position: relative; }
-.gallery-thumb img, .gallery-thumb video { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94); }
+/* Justified row: every thumb keeps its photo's own aspect ratio (nothing is
+   cropped). flex-grow is set to each image's width/height once it loads
+   (see galleries.html), so the row fills the width and all thumbs end up the
+   same height — portraits narrow, landscapes wide. 1.5 is the pre-load guess. */
+.gallery-thumbs { display: flex; gap: 4px; margin-bottom: 12px; }
+.gallery-thumb { flex: 1.5 1 0; min-width: 0; overflow: hidden; cursor: pointer; background: #eee; position: relative; }
+.gallery-thumb:empty { aspect-ratio: 4/3; }
+.gallery-thumb img, .gallery-thumb video { width: 100%; height: auto; display: block; transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94); }
 .gallery-thumb:hover img { transform: scale(1.07); }
 .see-more-btn {
   font-family: var(--font-main); font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: #aaa;
@@ -358,5 +363,4 @@ nav ul li a.active::after { width: 20px; }
   .contact-form .full, .btn-send, .cf-note { grid-column: 1; }
   .hero-text { padding: 0 24px 60px; }
   .hero-counter { right: 16px; }
-  .gallery-thumbs { grid-template-columns: 1fr 1fr; }
 }
