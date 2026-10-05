@@ -274,7 +274,7 @@ nav ul li a.active::after { width: 20px; }
   font-size: 18px; letter-spacing: 3px; text-transform: uppercase;
   color: var(--dark); margin-bottom: 18px;
 }
-.about-content p { font-family: var(--font-main); font-size: 14px; font-weight: 300; line-height: 1.9; color: #666; margin-bottom: 14px; }
+.about-content p { font-family: var(--font-main); font-size: 15px; font-weight: 300; line-height: 1.9; color: #666; margin-bottom: 14px; }
 .about-recognition { margin-top: 30px; }
 .recognition-list { list-style: none; }
 .recognition-item { margin-bottom: 16px; }
