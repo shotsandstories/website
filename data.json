@@ -1,288 +1,6 @@
 {
   "albums": [
     {
-      "id": "a1",
-      "title": "Lakshmi and Ravi Kishore",
-      "tags": [],
-      "description": "",
-      "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938108/shots-and-stories/brs69yotw2jjzuwzmdoq.jpg",
-      "sortMode": "capture",
-      "images": [
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228166/shots-and-stories/dag1x1dedyflyimzqlum.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228166/shots-and-stories/ev3ql4dnzc3x6d4gwsn4.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228166/shots-and-stories/yn85kncf50vdwvl8r7w2.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228166/shots-and-stories/yaejooa9esyegtssdrpf.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228166/shots-and-stories/k8kl4fmxokeoypfzf64m.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228167/shots-and-stories/aajjcxpmfkuus3fsylny.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228167/shots-and-stories/b3isbjtjehnr5vea1yet.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228167/shots-and-stories/vqn3ane47fpduxghf3dq.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228167/shots-and-stories/cahmbvjvx1noz1xipliw.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228167/shots-and-stories/jvzpusghdhwpfmvfzmdf.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228168/shots-and-stories/j5nfilvaiasqv9ngzcip.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228168/shots-and-stories/s0spejphmvhimmbyownk.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228168/shots-and-stories/y4xnqkhs5me58izkxoiy.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228168/shots-and-stories/wznsl68djcwmmwrquaxc.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228168/shots-and-stories/rdt2ezdkqgtmtxy7xqz1.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228169/shots-and-stories/bfuhm3wdsqiynkwmi7e5.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228169/shots-and-stories/zh1kgy6ttuce1su9fifs.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228169/shots-and-stories/ifpe9blp2vuxy17qcbmr.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228169/shots-and-stories/njvzku1fk1yizecjjgf9.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228169/shots-and-stories/zbrey3jjmkp6vzswf4op.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228169/shots-and-stories/hjsqenckquhs7b4jurmv.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228170/shots-and-stories/vgqgkv80f53dbrzkhizr.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228170/shots-and-stories/z7qroxvqlo2ig350nifd.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228170/shots-and-stories/q0jzvvdploaepv6d3ulu.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228170/shots-and-stories/bdsgupok3ohkofgkralo.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228171/shots-and-stories/ociakuo8m1sezty9pd8c.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228171/shots-and-stories/yietqappsekdmyqqwnj3.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228171/shots-and-stories/hg6thmvqoerhae7x0fie.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228171/shots-and-stories/qoogtlaggjnh2rfzgijm.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228171/shots-and-stories/fdxkyl9covokj2j20dqz.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228171/shots-and-stories/x59kgndqqrtmoyvq4mau.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228172/shots-and-stories/x8v9jq2m2shcw4fysith.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228171/shots-and-stories/v30n7lasfiwnsxzio9fp.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228172/shots-and-stories/fybozrsnbjjmub9erdy2.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228172/shots-and-stories/hnqbnw6mowjvli0besyj.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228172/shots-and-stories/ekmqurqxum7ebtewmq2b.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228172/shots-and-stories/jwwpgk4bkdzcvoxlkgvc.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228173/shots-and-stories/wrr1xxymtnkfanbztv2h.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228173/shots-and-stories/q3jkt94zmfdm6eoz68mz.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228173/shots-and-stories/qluuj7z51vh5wim75rzi.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228173/shots-and-stories/m23013xhppcfmtscjk6e.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228173/shots-and-stories/ajaw1leohnz6crp5exsr.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228173/shots-and-stories/eruuqejjipqt8j71t8sp.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228173/shots-and-stories/xor4mat95hmi8c4xxety.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228174/shots-and-stories/fuynsmbyhdnzlenxkz7f.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228174/shots-and-stories/j7nty7e2m94r3f8qlwpz.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228174/shots-and-stories/g74sjfm36mm7qghrbpcx.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228174/shots-and-stories/yvefwotc7xkrdzrjkkhh.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228174/shots-and-stories/lxuerwhz03wwmhtw2egx.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228174/shots-and-stories/ojq9bszgnmgvwxfrnv3h.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228174/shots-and-stories/z3g5i18et6wheuflebdy.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228175/shots-and-stories/frnkciwbykd3d3ejtdyc.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228175/shots-and-stories/budxdaafgvb9me3u7ywp.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228175/shots-and-stories/tfowhyqji0bjkd62xxwe.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228175/shots-and-stories/xtgxuullhk1knjmmsint.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228175/shots-and-stories/xbol2qblr76xolbjo1bp.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228176/shots-and-stories/fv1iyna4l1pfnvclegzh.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228176/shots-and-stories/hvkbevf85gzfdkh3fmk5.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228176/shots-and-stories/ze5dpkgpzilgfamloas1.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228176/shots-and-stories/y4yyutxgikzlykmrqrcm.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228177/shots-and-stories/mlnmvkure29jf0ogwqsn.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228177/shots-and-stories/k31lvk3h76lcw8kfedai.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228176/shots-and-stories/loqb2ina8gaignxgqn09.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228177/shots-and-stories/zfdk8oj7fa6sfyuj4ues.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228177/shots-and-stories/vdkjcywa4pokf3l2mxlk.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228193/shots-and-stories/ohj8mqhaby6r5ya9qh9h.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228241/shots-and-stories/sxjrisdo1z9zdyesnzwl.jpg",
-          "capturedAt": null
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787228304/shots-and-stories/qwhyifpgbvcqxspchozu.jpg",
-          "capturedAt": null
-        }
-      ]
-    },
-    {
       "id": "a2",
       "title": "Akash and Vani",
       "tags": [],
@@ -436,15 +154,19 @@
       "id": "a3",
       "title": "Sharmada and Karthik",
       "tags": [
-        "South indian wedding at The Balan Farm - Bengaluru"
+        "South Indian wedding at The Balan Farm - Bengaluru"
       ],
-      "description": "",
+      "description": "Some love stories begin with a grand gesture. Theirs began with a coffee and a quiet hello.☕❤️\n\nSharmada met Karthik at a café, and for an introvert like Karthik, love didn’t need many words. It lived in the little glances, quiet moments and everything they slowly discovered about each other.\n\nTheir story came alive beautifully in their wedding film—from those first café moments to a traditional Kannada Brahmin wedding at Balan Farms, Bangalore.\n\nA wedding film that doesn’t just show how they got married, but tells you why they belong together.",
       "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1786938658/shots-and-stories/wugzcsl4ev076pz5dh1j.jpg",
-      "sortMode": "capture",
+      "sortMode": "manual",
       "images": [
         {
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790408877/shots-and-stories/icrxrz5i3y20briyqiab.jpg",
           "capturedAt": "2024-11-12T08:17:59"
+        },
+        {
+          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790408876/shots-and-stories/jiyegjor3ru8x69nc8i4.jpg",
+          "capturedAt": "2024-11-12T11:46:20"
         },
         {
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790408871/shots-and-stories/ogyffhninvazfg2tbkl6.jpg",
@@ -525,10 +247,6 @@
         {
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790408800/shots-and-stories/pxr01l7pmrtn32lvnw8b.jpg",
           "capturedAt": "2024-11-12T11:45:45"
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790408876/shots-and-stories/jiyegjor3ru8x69nc8i4.jpg",
-          "capturedAt": "2024-11-12T11:46:20"
         },
         {
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790408471/shots-and-stories/pfmybcnhv9qajbr2vgmv.jpg",
@@ -1388,8 +1106,12 @@
       ],
       "description": "",
       "cover": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790409294/shots-and-stories/zhxqtiexfjmibymicff6.jpg",
-      "sortMode": "capture",
+      "sortMode": "manual",
       "images": [
+        {
+          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790409303/shots-and-stories/fwa78v18stm4uq1o2htc.jpg",
+          "capturedAt": "2024-04-15T08:12:15"
+        },
         {
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790409310/shots-and-stories/ailda5vjydhaq9zfrlsz.jpg",
           "capturedAt": "2024-04-15T06:23:54"
@@ -1605,10 +1327,6 @@
         {
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790409308/shots-and-stories/rqvqfbmblxmgfbr8fdrg.jpg",
           "capturedAt": "2024-04-15T08:11:59"
-        },
-        {
-          "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790409303/shots-and-stories/fwa78v18stm4uq1o2htc.jpg",
-          "capturedAt": "2024-04-15T08:12:15"
         },
         {
           "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1790409307/shots-and-stories/jb79ej65mmputlsbchvm.jpg",
