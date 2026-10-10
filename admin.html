@@ -198,13 +198,14 @@ img { display: block; max-width: 100%; }
 .modal-bg {
   position: fixed; inset: 0; background: rgba(0,0,0,0.6);
   z-index: 500; display: none;
-  align-items: flex-start; justify-content: center;
-  padding: 40px 20px; overflow-y: auto;
+  align-items: center; justify-content: center;
+  padding: 24px 20px; overflow: hidden; /* the backdrop never scrolls — only .modal-bd does */
 }
 .modal-bg.open { display: flex; }
 .modal {
   background: #fff; width: 100%; max-width: 680px;
-  margin: auto; animation: mIn 0.3s ease; flex-shrink: 0;
+  max-height: 100%; display: flex; flex-direction: column; /* header + footer stay put, body scrolls */
+  animation: mIn 0.3s ease; flex-shrink: 0;
 }
 @keyframes mIn {
   from { opacity: 0; transform: translateY(-20px); }
@@ -222,10 +223,12 @@ img { display: block; max-width: 100%; }
   transition: color 0.2s; line-height: 1;
 }
 .modal-hd .mc:hover { color: #333; }
-.modal-bd { padding: 28px; }
+.modal-hd { flex-shrink: 0; }
+.modal-bd { padding: 28px; flex: 1 1 auto; min-height: 0; overflow-y: auto; }
 .modal-ft {
   padding: 18px 28px; border-top: 1px solid #eee;
   display: flex; gap: 10px; justify-content: flex-end;
+  flex-shrink: 0; background: #fff; /* Save/Cancel always visible */
 }
 
 /* image manager in modal */
@@ -251,6 +254,8 @@ img { display: block; max-width: 100%; }
 .imgs-grid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
   gap: 8px; margin-bottom: 14px; min-height: 50px;
+  /* albums can hold hundreds of photos — scroll the grid itself so the upload / paste-URL controls below stay reachable */
+  max-height: 42vh; overflow-y: auto; padding-right: 4px;
 }
 .img-item-adm {
   position: relative; aspect-ratio: 4/3;
