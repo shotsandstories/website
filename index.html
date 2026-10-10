@@ -130,7 +130,9 @@ function buildHero(){
     const album=s.albumId?data.albums.find(a=>a.id===s.albumId):null;
     return `
     <div class="hero-slide${i===0?' active':''}" id="slide-${i}">
-      <div class="slide-img" style="background-image:url('${s.url}')"></div>
+      ${isVideoUrl(s.url)
+        ? `<div class="slide-img" style="background-image:url('${videoPosterUrl(s.url)}')"><video class="slide-video" src="${s.url}" poster="${videoPosterUrl(s.url)}" muted loop playsinline preload="${i===0?'auto':'none'}"></video></div>`
+        : `<div class="slide-img" style="background-image:url('${s.url}')"></div>`}
       <div class="slide-gradient"></div>
       <div class="hero-text">
         <div class="hero-slide-label">${String(i+1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')}${s.label?` &nbsp;&mdash;&nbsp; ${s.label}`:''}</div>
@@ -141,14 +143,27 @@ function buildHero(){
     </div>`;
   }).join('');
   document.getElementById('hero-dots').innerHTML=slides.map((_,i)=>`<div class="dot${i===0?' active':''}" onclick="heroGo(${i})"></div>`).join('');
+  syncHeroVideos();
   startSlideTimer();
+}
+/* Video slides: only the visible slide plays (others pause + rewind), so
+   hidden clips don't burn CPU/bandwidth. Respects prefers-reduced-motion
+   (poster frame stays up instead). play() can reject if the browser blocks
+   autoplay — harmless, the poster just stays. */
+function syncHeroVideos(){
+  const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('.hero-slide').forEach(sl=>{
+    const v=sl.querySelector('video'); if(!v) return;
+    if(sl.classList.contains('active') && !reduce){ v.play().catch(()=>{}); }
+    else { v.pause(); if(!sl.classList.contains('active')) v.currentTime=0; }
+  });
 }
 function heroGo(n){
   const total=document.querySelectorAll('.hero-slide').length;
   n=((n%total)+total)%total;
   document.querySelectorAll('.hero-slide').forEach((s,i)=>s.classList.toggle('active',i===n));
   document.querySelectorAll('.hero-counter .dot').forEach((d,i)=>d.classList.toggle('active',i===n));
-  currentSlide=n; resetProgress();
+  currentSlide=n; syncHeroVideos(); resetProgress();
 }
 function startSlideTimer(){ clearInterval(slideTimer); slideTimer=setInterval(()=>heroGo(currentSlide+1),SLIDE_DURATION); resetProgress(); }
 function resetProgress(){

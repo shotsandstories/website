@@ -136,9 +136,13 @@ function filmCover(film){
   if(film.cover) return film.cover;
   const yt=youtubeId(film.video);
   if(yt) return `https://img.youtube.com/vi/${yt}/hqdefault.jpg`;
-  if(isVideoUrl(film.video)) return film.video.replace(/\.[a-zA-Z0-9]+(\?.*)?$/,'.jpg');
+  if(isVideoUrl(film.video)) return videoPosterUrl(film.video);
   return '';
 }
+/* First-frame still of a Cloudinary-hosted video: same path with a .jpg
+   extension instead of the video's own (Cloudinary generates it on request).
+   Used for film covers and for hero video slides' poster image. */
+function videoPosterUrl(url){ return url.replace(/\.[a-zA-Z0-9]+(\?.*)?$/,'.jpg'); }
 
 /* Single-video lightbox, parallel to openAlbumLightbox() but for a film —
    always exactly one item, so lbMove()'s left/right arrows are harmless

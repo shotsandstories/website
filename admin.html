@@ -336,6 +336,11 @@ img { display: block; max-width: 100%; }
   opacity: 0; transition: opacity 0.2s; text-align: center; padding: 0 10px;
 }
 .hero-tile-img:hover::after { opacity: 1; }
+.hero-video-chip {
+  position: absolute; top: 8px; left: 8px; z-index: 1; pointer-events: none;
+  background: rgba(0,0,0,0.7); color: #fff; font-size: 9px; letter-spacing: 2px;
+  text-transform: uppercase; padding: 4px 8px;
+}
 .hero-tile-fields { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
 .hero-tile-fields input, .hero-tile-fields select {
   width: 100%; border: 1px solid #ddd; background: #fafafa;
@@ -465,14 +470,14 @@ img { display: block; max-width: 100%; }
         <h3>Hero Slides</h3>
         <button class="btn btn-black" onclick="saveHero()">Save Changes</button>
       </div>
-      <div style="font-size:11px;color:#bbb;margin-bottom:18px;line-height:1.6">Shown on the homepage, in this order. Drag tiles to reorder. Each slide can optionally link to one of your albums (clicking it opens that album instead of going to the Galleries page).</div>
+      <div style="font-size:11px;color:#bbb;margin-bottom:18px;line-height:1.6">Shown on the homepage, in this order. Drag tiles to reorder. Each slide can optionally link to one of your albums (clicking it opens that album instead of going to the Photos page). A slide can be an image or a short video: videos play muted and looping behind the text, and the first frame is used automatically as the poster. Keep clips short (5&ndash;10 seconds) and small &mdash; max 20MB.</div>
       <div class="hero-grid" id="hero-grid"></div>
-      <input type="file" id="hero-replace-in" accept="image/*" style="display:none" onchange="heroReplaceFile(this)">
+      <input type="file" id="hero-replace-in" accept="image/*,video/*" style="display:none" onchange="heroReplaceFile(this)">
       <div class="drop-zone" id="hero-dz"
         onclick="document.getElementById('hero-file-in').click()"
         ondragover="heroDzOver(event)" ondragleave="heroDzLeave()" ondrop="heroDzDrop(event)">
-        <input type="file" id="hero-file-in" multiple accept="image/*" style="display:none" onchange="heroFilesIn(this)">
-        &#128193; Drop images here or click to add hero slides
+        <input type="file" id="hero-file-in" multiple accept="image/*,video/*" style="display:none" onchange="heroFilesIn(this)">
+        &#128193; Drop images or short videos here, or click to add hero slides
       </div>
       <div class="upload-queue" id="hero-upload-queue"></div>
     </div>
@@ -1539,8 +1544,8 @@ function renderHeroGrid(){
   g.innerHTML=heroSlides.map((s,i)=>`
     <div class="hero-tile" draggable="true"
       ondragstart="hDStart(${i})" ondragover="hDOver(event,${i})" ondrop="hDDrop(event,${i})" ondragend="hDEnd()">
-      <div class="hero-tile-img" style="background-image:url('${s.url}')"
-        onclick="document.getElementById('hero-replace-in').dataset.idx=${i};document.getElementById('hero-replace-in').click()"></div>
+      <div class="hero-tile-img" style="background-image:url('${heroThumb(s.url)}')"
+        onclick="document.getElementById('hero-replace-in').dataset.idx=${i};document.getElementById('hero-replace-in').click()">${isVideoUrl(s.url)?'<span class="hero-video-chip">&#9654; Video</span>':''}</div>
       <div class="hero-tile-fields">
         <input type="text" value="${(s.label||'').replace(/"/g,'&quot;')}" placeholder="Label (e.g. Portrait)" oninput="heroSlides[${i}].label=this.value">
         <input type="text" value="${(s.title||'').replace(/"/g,'&quot;')}" placeholder="Title (e.g. Golden Light)" oninput="heroSlides[${i}].title=this.value">
@@ -1562,34 +1567,46 @@ function hDEnd(){document.querySelectorAll('.hero-tile').forEach(el=>el.classLis
 
 function heroDzOver(e){e.preventDefault();document.getElementById('hero-dz').classList.add('active-dz');}
 function heroDzLeave(){document.getElementById('hero-dz').classList.remove('active-dz');}
-function heroDzDrop(e){e.preventDefault();heroDzLeave();processHeroFiles(Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')));}
+function heroDzDrop(e){e.preventDefault();heroDzLeave();processHeroFiles(Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')||f.type.startsWith('video/')));}
 function heroFilesIn(inp){processHeroFiles(Array.from(inp.files));inp.value='';}
 
+/* A hero slide is an image or a short video (url alone tells which — see
+   isVideoUrl; no data-shape change). Hero videos autoplay muted + looped on
+   the homepage, so they're held to a much tighter size limit than the
+   100MB Cloudinary cap: this is what visitors download on first load. The
+   poster frame is derived from the video URL at render time, never stored. */
+const MAX_HERO_VIDEO_MB = 20;
+function heroThumb(url){ return isVideoUrl(url) ? url.replace(/\.[a-zA-Z0-9]+(\?.*)?$/,'.jpg') : url; }
+
+/* Uploads one file for a hero slide (image: resize first; video: size-check,
+   then straight to Cloudinary's video endpoint) and calls onDone(url). */
+function uploadHeroFile(f,onDone){
+  const isVid=f.type.startsWith('video/');
+  if(!isVid && !f.type.startsWith('image/')){ toast(f.name+' is not an image or video',true); return; }
+  if(isVid && f.size > MAX_HERO_VIDEO_MB*1024*1024){
+    toast(`${f.name} is ${(f.size/1024/1024).toFixed(0)}MB — hero videos must be under ${MAX_HERO_VIDEO_MB}MB (visitors download it on first load). Trim it to 5–10 seconds and compress it (e.g. HandBrake), then try again.`,true);
+    return;
+  }
+  const itemId='up'+Date.now()+Math.random().toString(36).slice(2,7);
+  addQueueItem(itemId,f.name,'hero-upload-queue',f.size);
+  if(isVid){ uploadToCloudinary(f,itemId,f.name,onDone,'video'); return; }
+  resizeImage(f,itemId)
+    .then(blob=>uploadToCloudinary(blob,itemId,f.name,onDone))
+    .catch(()=>uploadToCloudinary(f,itemId,f.name,onDone));
+}
+
 function processHeroFiles(files){
-  files.forEach(f=>{
-    if(!f.type.startsWith('image/')){ toast(f.name+' is not an image',true); return; }
-    const itemId='up'+Date.now()+Math.random().toString(36).slice(2,7);
-    addQueueItem(itemId,f.name,'hero-upload-queue',f.size);
-    const onDone=(url)=>{
-      heroSlides.push({id:'h'+Date.now()+Math.random().toString(36).slice(2,5),url,label:'',title:'',albumId:null});
-      renderHeroGrid();
-    };
-    resizeImage(f,itemId)
-      .then(blob=>uploadToCloudinary(blob,itemId,f.name,onDone))
-      .catch(()=>uploadToCloudinary(f,itemId,f.name,onDone));
-  });
+  files.forEach(f=>uploadHeroFile(f,(url)=>{
+    heroSlides.push({id:'h'+Date.now()+Math.random().toString(36).slice(2,5),url,label:'',title:'',albumId:null});
+    renderHeroGrid();
+  }));
 }
 
 function heroReplaceFile(inp){
   const idx=parseInt(inp.dataset.idx,10);
   const f=inp.files[0]; inp.value='';
   if(!f) return;
-  const itemId='up'+Date.now()+Math.random().toString(36).slice(2,7);
-  addQueueItem(itemId,f.name,'hero-upload-queue',f.size);
-  const onDone=(url)=>{ heroSlides[idx].url=url; renderHeroGrid(); };
-  resizeImage(f,itemId)
-    .then(blob=>uploadToCloudinary(blob,itemId,f.name,onDone))
-    .catch(()=>uploadToCloudinary(f,itemId,f.name,onDone));
+  uploadHeroFile(f,(url)=>{ heroSlides[idx].url=url; renderHeroGrid(); });
 }
 
 function saveHero(){
