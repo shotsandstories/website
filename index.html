@@ -113,8 +113,14 @@
 /* HERO — slides come from data.hero (managed in admin.html's Hero tab),
    not hardcoded here. Each slide independently stores its own image/label/
    title and optionally links to an album by id. */
-let currentSlide=0, slideTimer=null;
-const SLIDE_DURATION=5000;
+let currentSlide=0, slideTimer=null, timerToken=0;
+/* Timing: photo slides stay for data.heroDelay seconds (admin Hero tab;
+   default 5 — the original fixed value). Video slides stay for the video's
+   own full length, then advance (the 'ended' event, plus a timeout as a
+   safety net). If a video can't play (autoplay blocked, reduced-motion) it
+   falls back to the photo delay so the slider never stalls. */
+function imageDelayMs(){ const s=Number(getData().heroDelay); return (s>=2&&s<=30?s:5)*1000; }
+function prefersReducedMotion(){ return !!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
 
 function buildHero(){
   currentSlide=0; // safe to call buildHero() again after a late data.json fetch resolves
@@ -131,7 +137,7 @@ function buildHero(){
     return `
     <div class="hero-slide${i===0?' active':''}" id="slide-${i}">
       ${isVideoUrl(s.url)
-        ? `<div class="slide-img" style="background-image:url('${videoPosterUrl(s.url)}')"><video class="slide-video" src="${s.url}" poster="${videoPosterUrl(s.url)}" muted loop playsinline preload="${i===0?'auto':'none'}"></video></div>`
+        ? `<div class="slide-img" style="background-image:url('${videoPosterUrl(s.url)}')"><video class="slide-video" src="${s.url}" poster="${videoPosterUrl(s.url)}" muted playsinline onended="heroVideoEnded(this)" preload="${i===0?'auto':'none'}"></video></div>`
         : `<div class="slide-img" style="background-image:url('${s.url}')"></div>`}
       <div class="slide-gradient"></div>
       <div class="hero-text">
@@ -143,19 +149,14 @@ function buildHero(){
     </div>`;
   }).join('');
   document.getElementById('hero-dots').innerHTML=slides.map((_,i)=>`<div class="dot${i===0?' active':''}" onclick="heroGo(${i})"></div>`).join('');
-  syncHeroVideos();
   startSlideTimer();
 }
-/* Video slides: only the visible slide plays (others pause + rewind), so
-   hidden clips don't burn CPU/bandwidth. Respects prefers-reduced-motion
-   (poster frame stays up instead). play() can reject if the browser blocks
-   autoplay — harmless, the poster just stays. */
-function syncHeroVideos(){
-  const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* Video slides: only the visible slide plays — every other video is paused
+   and rewound, so hidden clips don't burn CPU/bandwidth. */
+function pauseInactiveHeroVideos(){
   document.querySelectorAll('.hero-slide').forEach(sl=>{
-    const v=sl.querySelector('video'); if(!v) return;
-    if(sl.classList.contains('active') && !reduce){ v.play().catch(()=>{}); }
-    else { v.pause(); if(!sl.classList.contains('active')) v.currentTime=0; }
+    const v=sl.querySelector('video');
+    if(v && !sl.classList.contains('active')){ v.pause(); v.currentTime=0; }
   });
 }
 function heroGo(n){
@@ -163,13 +164,39 @@ function heroGo(n){
   n=((n%total)+total)%total;
   document.querySelectorAll('.hero-slide').forEach((s,i)=>s.classList.toggle('active',i===n));
   document.querySelectorAll('.hero-counter .dot').forEach((d,i)=>d.classList.toggle('active',i===n));
-  currentSlide=n; syncHeroVideos(); resetProgress();
+  currentSlide=n; startSlideTimer();
 }
-function startSlideTimer(){ clearInterval(slideTimer); slideTimer=setInterval(()=>heroGo(currentSlide+1),SLIDE_DURATION); resetProgress(); }
-function resetProgress(){
+function heroVideoEnded(v){
+  const sl=v.closest('.hero-slide');
+  if(sl && sl.classList.contains('active')) heroGo(currentSlide+1); // with a single slide this just replays it
+}
+function armSlideTimer(ms,extra){
+  clearTimeout(slideTimer);
+  slideTimer=setTimeout(()=>heroGo(currentSlide+1),ms+(extra||0));
   const bar=document.getElementById('progress-bar');
   bar.style.transition='none'; bar.style.width='0%'; bar.offsetWidth;
-  bar.style.transition=`width ${SLIDE_DURATION}ms linear`; bar.style.width='100%';
+  bar.style.transition=`width ${ms}ms linear`; bar.style.width='100%';
+}
+/* Starts the clock for whichever slide is now active. timerToken guards the
+   async video callbacks against a slide change that happened in the meantime. */
+function startSlideTimer(){
+  const token=++timerToken;
+  clearTimeout(slideTimer);
+  pauseInactiveHeroVideos();
+  const sl=document.querySelector('.hero-slide.active');
+  const v=sl&&sl.querySelector('video');
+  if(!v || prefersReducedMotion()){ armSlideTimer(imageDelayMs()); return; }
+  v.currentTime=0;
+  slideTimer=setTimeout(()=>heroGo(currentSlide+1),20000); // stall guard while the clip buffers; arm() below replaces it once playback actually starts
+  const arm=()=>{
+    if(token!==timerToken) return;
+    const d=v.duration;
+    armSlideTimer(isFinite(d)&&d>0?d*1000:imageDelayMs(), 1500); // 'ended' normally fires first; the extra 1.5s is just a safety net
+  };
+  v.play().then(()=>{
+    if(token!==timerToken) return;
+    if(v.readyState>=1) arm(); else v.addEventListener('loadedmetadata',arm,{once:true});
+  }).catch(()=>{ if(token===timerToken) armSlideTimer(imageDelayMs()); });
 }
 
 /* ABOUT */

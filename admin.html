@@ -470,7 +470,12 @@ img { display: block; max-width: 100%; }
         <h3>Hero Slides</h3>
         <button class="btn btn-black" onclick="saveHero()">Save Changes</button>
       </div>
-      <div style="font-size:11px;color:#bbb;margin-bottom:18px;line-height:1.6">Shown on the homepage, in this order. Drag tiles to reorder. Each slide can optionally link to one of your albums (clicking it opens that album instead of going to the Photos page). A slide can be an image or a short video: videos play muted and looping behind the text, and the first frame is used automatically as the poster. Keep clips short (5&ndash;10 seconds) and small &mdash; max 20MB.</div>
+      <div style="font-size:11px;color:#bbb;margin-bottom:18px;line-height:1.6">Shown on the homepage, in this order. Drag tiles to reorder. Each slide can optionally link to one of your albums (clicking it opens that album instead of going to the Photos page). A slide can be an image or a short video: videos play muted and looping behind the text, and the first frame is used automatically as the poster. Keep clips short (5&ndash;10 seconds) and small &mdash; max 20MB. A video slide stays up for the video's full length, then moves on.</div>
+      <div class="form-field" style="max-width:260px;margin-bottom:18px">
+        <label>Photo slide delay (seconds)</label>
+        <input type="number" id="hero-delay" min="2" max="30" step="0.5" placeholder="5">
+        <div class="hint">How long each <em>photo</em> slide stays on screen. Default 5. Doesn't affect videos.</div>
+      </div>
       <div class="hero-grid" id="hero-grid"></div>
       <input type="file" id="hero-replace-in" accept="image/*,video/*" style="display:none" onchange="heroReplaceFile(this)">
       <div class="drop-zone" id="hero-dz"
@@ -1530,6 +1535,7 @@ let heroSlides=[], heroDragFrom=null;
 
 function loadHeroTab(){
   heroSlides=(getData().hero||[]).map(s=>({...s})); // working copy — nothing persists until Save
+  document.getElementById('hero-delay').value=getData().heroDelay||5;
   document.getElementById('hero-upload-queue').innerHTML='';
   renderHeroGrid();
 }
@@ -1612,6 +1618,8 @@ function heroReplaceFile(inp){
 function saveHero(){
   const data=getData();
   data.hero=heroSlides.map(s=>({id:s.id,url:s.url,label:s.label||'',title:s.title||'',albumId:s.albumId||null}));
+  const delay=parseFloat(document.getElementById('hero-delay').value);
+  data.heroDelay=(delay>=2&&delay<=30)?delay:5; // blank/out-of-range falls back to the original 5s
   saveData(data);
   toast('Hero slides saved!');
 }
