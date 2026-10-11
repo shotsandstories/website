@@ -3407,8 +3407,8 @@
     {
       "id": "h17872184003651s2",
       "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787218399/shots-and-stories/pavhhp2aostfad2uxcah.jpg",
-      "label": "",
-      "title": "",
+      "label": "Pooja and Prabhakar",
+      "title": "The Wedding",
       "albumId": null
     }
   ],
@@ -3469,5 +3469,6 @@
       "cover": "",
       "video": "https://youtu.be/soXayQHSHo4"
     }
-  ]
+  ],
+  "heroDelay": 5
 }
