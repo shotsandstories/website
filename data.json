@@ -3553,7 +3553,7 @@
       "id": "h1787217054926um5",
       "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787229195/shots-and-stories/ctw1qgkgc7vxg7zkozdq.jpg",
       "label": "",
-      "title": "Endless Us",
+      "title": "Endless Us!",
       "albumId": null
     },
     {
@@ -3567,14 +3567,14 @@
       "id": "h1791705363024dv7",
       "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1791705362/shots-and-stories/uxmejset3ckrzvamqvo4.jpg",
       "label": "",
-      "title": "Roots and Wings",
+      "title": "Roots & Wings",
       "albumId": "a3"
     },
     {
       "id": "h17872184003651s2",
       "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1787218399/shots-and-stories/pavhhp2aostfad2uxcah.jpg",
       "label": "",
-      "title": "Petals and Promises",
+      "title": "Petals & Promises",
       "albumId": "a1790410643110"
     },
     {
@@ -3602,7 +3602,7 @@
       "id": "h1791705361396ul9",
       "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1791705360/shots-and-stories/mnfnwlkk1tjiytts96a5.jpg",
       "label": "",
-      "title": "Sunlit Radiance",
+      "title": "Sunlit Grace",
       "albumId": "a1790409403958"
     },
     {
@@ -3616,7 +3616,7 @@
       "id": "h1791705363287cp6",
       "url": "https://res.cloudinary.com/djj9u3ciy/image/upload/v1791705362/shots-and-stories/vs8fqxwu671bjldbqvod.jpg",
       "label": "",
-      "title": "The Moment",
+      "title": "Forever",
       "albumId": "a1790409403958"
     }
   ],
@@ -3642,8 +3642,8 @@
   "theme": {
     "primary": "#D4501A",
     "accent": "#2A7D6F",
-    "dark": "#1a1a1a",
-    "fontKey": "josefin",
+    "dark": "#1A1A1A",
+    "fontKey": "ebgaramond",
     "instagramEmbedCode": ""
   },
   "films": [
