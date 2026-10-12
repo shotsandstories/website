@@ -386,3 +386,9 @@ nav ul li a.active::after { width: 20px; }
 
 /* ORANGE ACCENTS */
 #about-heading, #section-contact .section-heading, .ri-title { color: var(--orange); }
+
+/* MOBILE BROWSER CHROME: 100vh includes the area behind Safari's toolbar, so the
+   bottom of the scroll area got hidden. Use dynamic viewport height + safe-area padding. */
+@supports (height: 100dvh) { #right-panel { height: 100dvh; } }
+#right-panel > .section-wrap:last-child { padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px)); }
+@media (max-width: 800px) { #right-panel > .section-wrap:last-child { padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px)); } }
