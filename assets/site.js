@@ -251,3 +251,25 @@ function showToast(msg,err=false){const t=document.getElementById('toast');t.tex
 /* every page needs these on load */
 initPanelState();
 applyTheme();
+
+/* SOCIAL LINKS — edit URLs here. Empty url = hidden. Fills every [data-socials] container. */
+const SOCIALS=[
+  {key:'whatsapp',label:'Chat on WhatsApp',url:'https://wa.me/919591850050?text='+encodeURIComponent('Hi, I found you via your website'),
+   path:'M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.3 0 .5l-.3.5-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.2.1.8-.1 1.4z'},
+  {key:'instagram',label:'@shots.and.stories',url:'https://www.instagram.com/shots.and.stories',
+   path:'M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 0 1 12 7.5zm0 2A2.5 2.5 0 1 0 14.5 12 2.5 2.5 0 0 0 12 9.5zM17.3 5.8a1.1 1.1 0 1 1-1.1 1.1 1.1 1.1 0 0 1 1.1-1.1z'},
+  {key:'youtube',label:'Watch on YouTube',url:'', /* TODO: paste YouTube channel URL */
+   path:'M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2C2 8.8 2 12 2 12s0 3.2.4 4.8a2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8zM10 15V9l5.2 3z'}
+];
+function renderSocials(){
+  document.querySelectorAll('[data-socials]').forEach(el=>{
+    const mode=el.getAttribute('data-socials'); /* 'icons' | 'list' */
+    el.innerHTML=SOCIALS.filter(s=>s.url).map(s=>{
+      const svg=`<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="${s.path}"/></svg>`;
+      return mode==='list'
+        ?`<a class="social-pill" href="${s.url}" target="_blank" rel="noopener noreferrer">${svg}<span>${s.label}</span></a>`
+        :`<a class="social-ic" href="${s.url}" target="_blank" rel="noopener noreferrer" aria-label="${s.label}" title="${s.label}">${svg}</a>`;
+    }).join('');
+  });
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',renderSocials);else renderSocials();

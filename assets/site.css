@@ -371,3 +371,15 @@ nav ul li a.active::after { width: 20px; }
   .hero-text { padding: 0 24px 60px; }
   .hero-counter { right: 16px; }
 }
+/* SOCIAL LINKS */
+.social-ic{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;color:#777;transition:color .2s}
+.social-ic:hover{color:var(--teal)}
+.panel-footer .socials{display:flex;justify-content:center;gap:6px;margin-bottom:8px}
+.contact-wrap{display:flex;gap:48px;align-items:flex-start;flex-wrap:wrap}
+.contact-wrap .contact-form{flex:1 1 420px}
+.contact-direct{flex:0 1 260px;padding-left:32px;border-left:1px solid #e5e5e5}
+.contact-direct h3{font-family:var(--font-main);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#888;margin:0 0 14px;font-weight:500}
+.contact-direct .socials{display:flex;flex-direction:column;gap:10px}
+.social-pill{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid #ddd;color:#333;font-size:14px;font-family:var(--font-main);transition:border-color .2s,color .2s}
+.social-pill:hover{border-color:var(--teal);color:var(--teal)}
+@media (max-width:800px){.contact-direct{padding-left:0;border-left:0;border-top:1px solid #e5e5e5;padding-top:24px;flex-basis:100%}}
