@@ -383,3 +383,6 @@ nav ul li a.active::after { width: 20px; }
 .social-pill{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid #ddd;color:#333;font-size:14px;font-family:var(--font-main);transition:border-color .2s,color .2s}
 .social-pill:hover{border-color:var(--teal);color:var(--teal)}
 @media (max-width:800px){.contact-direct{padding-left:0;border-left:0;border-top:1px solid #e5e5e5;padding-top:24px;flex-basis:100%}}
+
+/* ORANGE ACCENTS */
+#about-heading, #section-contact .section-heading, .ri-title { color: var(--orange); }
