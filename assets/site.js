@@ -293,3 +293,6 @@ document.addEventListener('dragstart',e=>{ if(e.target.tagName==='IMG'||e.target
 document.getElementById('lb-youtube').addEventListener('click',e=>{
   if(!e.target.closest('iframe'))lbPlayYoutube();
 });
+
+/* Footer copyright year stays current. */
+document.querySelectorAll('[data-year]').forEach(e=>e.textContent=new Date().getFullYear());
