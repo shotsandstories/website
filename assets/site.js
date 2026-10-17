@@ -174,6 +174,12 @@ function togglePanel(){
   if(window.innerWidth>900){ panel.classList.toggle('hidden',!panelOpen); }
   else { panel.classList.toggle('visible',panelOpen); }
 }
+/* Close the nav when the user clicks/taps anywhere outside it (and outside the hamburger). */
+document.addEventListener('click',e=>{
+  if(!panelOpen)return;
+  if(e.target.closest('#left-panel,#ham-btn'))return;
+  togglePanel();
+});
 function initPanelState(){
   panelOpen=false;
   const btn=document.getElementById('ham-btn');
