@@ -273,3 +273,11 @@ function renderSocials(){
   });
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',renderSocials);else renderSocials();
+
+/* IMAGE PROTECTION (deterrent only) — blocks right-click "Save image as", dragging
+   images to the desktop, and iOS long-press save. Does NOT stop screenshots or
+   DevTools; nothing client-side can. Form fields are left alone. */
+document.addEventListener('contextmenu',e=>{
+  if(e.target.closest&&e.target.closest('img,video,.hero-slide,.gallery-thumb,.masonry-tile,.film-card,#lightbox'))e.preventDefault();
+});
+document.addEventListener('dragstart',e=>{ if(e.target.tagName==='IMG'||e.target.tagName==='VIDEO')e.preventDefault(); });
