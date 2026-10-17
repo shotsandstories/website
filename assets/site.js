@@ -281,3 +281,9 @@ document.addEventListener('contextmenu',e=>{
   if(e.target.closest&&e.target.closest('img,video,.hero-slide,.gallery-thumb,.masonry-tile,.film-card,#lightbox'))e.preventDefault();
 });
 document.addEventListener('dragstart',e=>{ if(e.target.tagName==='IMG'||e.target.tagName==='VIDEO')e.preventDefault(); });
+
+/* The YouTube poster <img> is non-targetable (image protection), so the click that
+   starts playback is handled on its container instead. Ignored once the iframe exists. */
+document.getElementById('lb-youtube').addEventListener('click',e=>{
+  if(!e.target.closest('iframe'))lbPlayYoutube();
+});

@@ -400,4 +400,3 @@ img, video { -webkit-user-drag: none; user-select: none; -webkit-touch-callout: 
    contextmenu. Making images non-targetable means a long-press lands on the parent
    element (no "Save image" menu). Clicks still reach the parent handlers. */
 img, .hero-slide video { pointer-events: none; }
-#lb-yt-poster { pointer-events: auto; }
