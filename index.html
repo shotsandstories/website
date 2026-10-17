@@ -144,8 +144,8 @@ function buildHero(){
     return `
     <div class="hero-slide${i===0?' active':''}" id="slide-${i}">
       ${isVideoUrl(s.url)
-        ? `<div class="slide-img" style="background-image:url('${videoPosterUrl(s.url)}')"><video class="slide-video" src="${s.url}" poster="${videoPosterUrl(s.url)}" muted playsinline onended="heroVideoEnded(this)" preload="${i===0?'auto':'none'}"></video></div>`
-        : `<div class="slide-img" style="background-image:url('${s.url}')"></div>`}
+        ? `<div class="slide-img" style="--bg:url('${videoPosterUrl(s.url)}')"><video class="slide-video" src="${s.url}" poster="${videoPosterUrl(s.url)}" muted playsinline onended="heroVideoEnded(this)" preload="${i===0?'auto':'none'}"></video></div>`
+        : `<div class="slide-img" style="--bg:url('${s.url}')"></div>`}
       <div class="slide-gradient"></div>
       <div class="hero-text">
         <div class="hero-slide-label">${String(i+1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')}${s.label?` &nbsp;&mdash;&nbsp; ${s.label}`:''}</div>

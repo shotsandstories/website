@@ -406,3 +406,9 @@ img, .hero-slide video { pointer-events: none; }
    not the image, so no image context menu is offered (iOS ignores pointer-events:none on img). */
 .masonry-tile, .about-img-wrap { position: relative; }
 .gallery-thumb::after, .masonry-tile::after, .film-card-cover::after, .about-img-wrap::after { content: ''; position: absolute; inset: 0; z-index: 2; }
+
+/* Hero image is painted by a pseudo-element via --bg, so the element a long-press hits has no
+   background-image of its own and mobile browsers offer no Save/Copy/Open image menu. */
+.hero-slide .slide-img::before { content: ''; position: absolute; inset: 0; background: var(--bg) center / cover no-repeat; }
+.hero-slide .slide-video { z-index: 1; }
+.hero-slide .slide-gradient { z-index: 2; }
