@@ -416,3 +416,8 @@ img, .hero-slide video { pointer-events: none; }
 /* COPYRIGHT */
 .copy-note { font-family: var(--font-main); font-size: 12px; line-height: 1.7; color: #888; max-width: 640px; margin: -20px 0 36px; }
 .lb-copy { position: fixed; bottom: 44px; left: 50%; transform: translateX(-50%); width: min(90vw, 620px); text-align: center; color: rgba(255,255,255,0.35); font-family: var(--font-main); font-size: 10px; line-height: 1.6; letter-spacing: 0.5px; pointer-events: none; }
+
+/* The 4px scrollbar gutter of #right-panel showed as a white strip beside the full-bleed hero.
+   Hide the scrollbar (scrolling still works) so the hero spans the full width. */
+#right-panel { scrollbar-width: none; -ms-overflow-style: none; }
+#right-panel::-webkit-scrollbar { width: 0; height: 0; display: none; }
