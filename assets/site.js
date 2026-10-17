@@ -225,19 +225,19 @@ function lbRefresh(){
   if(ytId){
     ytEl.style.display='block';
     ytEl.dataset.ytId=ytId;
-    document.getElementById('lb-yt-poster').src=`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+    document.getElementById('lb-yt-poster').style.backgroundImage=`url('https://img.youtube.com/vi/${ytId}/hqdefault.jpg')`;
     vidEl.pause(); vidEl.removeAttribute('src'); vidEl.load();
     vidEl.style.display='none';
-    imgEl.style.display='none'; imgEl.removeAttribute('src');
+    imgEl.style.display='none'; imgEl.style.backgroundImage='';
   } else if(isVideoUrl(url)){
     ytEl.style.display='none';
-    imgEl.style.display='none'; imgEl.removeAttribute('src');
+    imgEl.style.display='none'; imgEl.style.backgroundImage='';
     vidEl.style.display='block'; vidEl.src=url;
   } else {
     ytEl.style.display='none';
     vidEl.pause(); vidEl.removeAttribute('src'); vidEl.load();
     vidEl.style.display='none';
-    imgEl.style.display='block'; imgEl.src=url;
+    imgEl.style.display='block'; imgEl.style.backgroundImage=`url('${url}')`;
   }
   document.getElementById('lb-cap').textContent=`${lbIdx+1} / ${lbImgs.length}`;
 }
